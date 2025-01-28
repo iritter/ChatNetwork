@@ -21,7 +21,7 @@ HUB_URL = 'http://localhost:5555'
 HUB_AUTHKEY = '1234567890'
 CHANNEL_AUTHKEY = '0987654321'
 CHANNEL_NAME = "Confession Wall"
-CHANNEL_ENDPOINT = "http://localhost:5001" # don't forget to adjust in the bottom of the file
+CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
 CHANNEL_FILE = 'messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 
@@ -122,4 +122,4 @@ def save_messages(messages):
 # to register channel with hub
 
 if __name__ == '__main__':
-    app.run(port=5001, debug=True)
+    app.run(port=5005, debug=True)
