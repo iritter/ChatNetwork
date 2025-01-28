@@ -99,6 +99,9 @@ def send_message():
     save_messages(messages)
     return "OK", 200
 
+# Set the maximum number of messages to store
+MAX_MESSAGES = 2  # change this value to set your desired limit
+
 def read_messages():
     global CHANNEL_FILE
     try:
@@ -110,10 +113,16 @@ def read_messages():
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
-    return messages
+    
+    # Return only the most recent MAX_MESSAGES messages
+    return messages[-MAX_MESSAGES:]
 
 def save_messages(messages):
     global CHANNEL_FILE
+    # Ensure we don't exceed the max number of messages
+    if len(messages) > MAX_MESSAGES:
+        messages = messages[-MAX_MESSAGES:]
+    
     with open(CHANNEL_FILE, 'w') as f:
         json.dump(messages, f)
 
