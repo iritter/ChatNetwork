@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -155,8 +156,23 @@
         .toggle-btn:hover {
             background-color: #444;
         }
+
+        .flash-message {
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .flash-message.success {
+            background-color: lightgreen;
+        }
+
+        .flash-message.error {
+            background-color: lightcoral;
+        }
     </style>
 </head>
+
 <body>
     <header>
         <h1>
@@ -167,7 +183,8 @@
 
     <div class="container">
         <div class="channel-info">
-            <p>Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board for your confessions, funny stories, and awkward moments! 😈😇</p>
+            <p>Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board for your confessions, funny
+                stories, and awkward moments! 😈😇</p>
             <p style="text-align: center;">
                 ✨ <strong>How it works:</strong><br>
                 🔸 Post your confession - completely anonymous!<br>
@@ -180,26 +197,15 @@
             <a class="back-link" href="{{ url_for('home_page') }}">Back to List of Channels</a>
         </div>
 
-        {% if channel %}
-            <div class="message-list">
-                {% for message in messages %}
-                    <div class="message">
-                        <h2>{{ message.sender }}</h2>
-                        <p>{{ message.content }}</p>
-                        <p class="timestamp">{{ message.timestamp }}</p>
-
-                        <!-- Reaction Buttons -->
-                        <div class="reaction-buttons">
-                            <button>👍</button>
-                            <button>❤️</button>
-                            <button>😂</button>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <h2>Channel not found</h2>
+        {% with messages = get_flashed_messages(with_categories=True) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="flash-message {{ category }}">{{ message }}</div>
+            {% endfor %}
+        </div>
         {% endif %}
+        {% endwith %}
 
         <div class="form-container">
             <form action="post" method="post">
@@ -207,10 +213,34 @@
                 <label for="sender">Sender: </label>
                 <input type="text" name="sender" id="sender" placeholder="Your Name or Alias" required><br>
                 <label for="content">Message: </label>
-                <input type="text" name="content" id="content" placeholder="Write your confession or funny moment..." required><br>
+                <input type="text" name="content" id="content" placeholder="Write your confession or funny moment..."
+                    required><br>
                 <input type="submit" value="Post Confession">
             </form>
         </div>
+    
+
+        {% if channel %}
+        <div class="message-list">
+            {% for message in messages | reverse %}
+            <div class="message">
+                <h2>{{ message.sender }}</h2>
+                <p>{{ message.content }}</p>
+                <p class="timestamp">{{ message.timestamp }}</p>
+
+                <!-- Reaction Buttons -->
+                <div class="reaction-buttons">
+                    <button>👍</button>
+                    <button>❤️</button>
+                    <button>😂</button>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <h2>Channel not found</h2>
+        {% endif %}
+
     </div>
 
     <script>
@@ -226,4 +256,5 @@
         }
     </script>
 </body>
+
 </html>

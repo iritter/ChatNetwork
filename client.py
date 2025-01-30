@@ -1,9 +1,12 @@
-from flask import Flask, request, render_template, url_for, redirect
+from flask import Flask, request, render_template, url_for, redirect, flash
 import requests
 import urllib.parse
 import datetime
+from better_profanity import profanity
 
 app = Flask(__name__)
+
+app.secret_key = 'my_secret_key'  
 
 HUB_AUTHKEY = '1234567890'
 HUB_URL = 'http://localhost:5555'
@@ -60,6 +63,7 @@ def post_message():
     post_channel = request.form['channel']
     if not post_channel:
         return "No channel specified", 400
+    
     channel = None
     for c in update_channels():
         if c['endpoint'] == urllib.parse.unquote(post_channel):
@@ -67,8 +71,19 @@ def post_message():
             break
     if not channel:
         return "Channel not found", 404
+    
     message_content = request.form['content']
     message_sender = request.form['sender']
+
+    # check if sender or message contains profanities
+    if profanity.contains_profanity(message_content):
+        flash("Your last message contained inappropriate content and was deleted.", "error")
+        return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
+    
+    if profanity.contains_profanity(message_sender):
+        flash("Your alias contained inappropriate content and was deleted.", "error")
+        return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
+
     message_timestamp = datetime.datetime.now().isoformat()
     response = requests.post(channel['endpoint'],
                              headers={'Authorization': 'authkey ' + channel['authkey']},
