@@ -23,7 +23,8 @@ HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
 HUB_AUTHKEY = 'Crr-K24d-2N'
 CHANNEL_AUTHKEY = 'Sdh-aKo34-hf' #--- IST GEÄNDERT ---#
 CHANNEL_NAME = "Confession Wall"
-CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
+#CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
+CHANNEL_ENDPOINT = CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u070"
 CHANNEL_FILE = 'messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 
@@ -238,5 +239,8 @@ def save_messages(messages):
 # run flask --app channel.py register
 # to register channel with hub
 
-if __name__ == '__main__':
-    app.run(port=5005, debug=True)
+#if __name__ == '__main__':
+#    app.run(port=5005, debug=True)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5005, debug=True)
