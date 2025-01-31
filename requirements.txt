@@ -1,4 +1,4 @@
-flask
-flask-sqlalchemy
+Flask
 requests
-better_profanity
+Flask-SQLAlchemy
+better-profanity
