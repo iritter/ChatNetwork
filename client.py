@@ -8,8 +8,10 @@ app = Flask(__name__)
 
 app.secret_key = 'my_secret_key'  
 
-HUB_AUTHKEY = '1234567890'
-HUB_URL = 'http://localhost:5555'
+HUB_AUTHKEY = 'Crr-K24d-2N'
+
+HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
+
 
 CHANNELS = None
 LAST_CHANNEL_UPDATE = None

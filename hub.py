@@ -36,7 +36,8 @@ app.app_context().push()  # create an app context before initializing db
 db.init_app(app)  # initialize database
 db.create_all()  # create database if necessary
 
-SERVER_AUTHKEY = '1234567890'
+SERVER_AUTHKEY = 'Crr-K24d-2N'
+
 
 
 # The Home page is accessible to anyone
