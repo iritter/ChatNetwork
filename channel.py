@@ -5,6 +5,7 @@ from flask import Flask, request, render_template, jsonify
 import json
 import requests
 from datetime import datetime, timedelta
+import random
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -97,10 +98,15 @@ def send_message():
         return "No sender", 400
     if not 'timestamp' in message:
         return "No timestamp", 400
-    if not 'extra' in message:
-        extra = None
-    else:
-        extra = message['extra']
+    # if not 'extra' in message:
+    #     extra = None
+    # else:
+    #     extra = message['extra']
+    
+    #automatic_reply = "Thanks for sharing!"
+    automatic_reply = gen_reply(message)
+    extra = [0, 0, 0, automatic_reply]
+
     # add message to messages
     messages = read_messages()
     messages.append({'content': message['content'],
@@ -111,8 +117,83 @@ def send_message():
     save_messages(messages)
     return "OK", 200
 
+def gen_reply(message):
+    keyword_responses = {
+        "judge": "No judgment here! Everyone’s opinion matters. 😊",
+        "embarrassing": "We've all been there! No need to worry, it happens to everyone. 😅",
+        "lonely": "You are not alone… Thanks for being part of the community! 💙",
+        "happy": "Happiness is contagious! 😊 Keep spreading the good vibes!",
+        "sad": "Sending positive vibes your way! 🌟",
+        "angry": "It’s okay to feel this way. We’re here to listen. ❤️",
+        "help": "We’re here for you! How can we assist?",
+        "?": "Great question! Let’s see what the community thinks. 🤔",
+        "love": "Love is all we need! ❤️",
+        "lost": "You got this! We believe in you! 💪",
+        "tired": "Rest up and recharge! Your well-being is important. 🌿",
+        "stressed": "Take a deep breath! You’re doing great. 💛"
+    }
+    generic_responses = [
+        "Thanks for sharing! 😊",
+        "That’s an interesting thought! 🤔",
+        "Appreciate your input! 🙌",
+        "Good point! 🤝",
+        "That’s a unique perspective! 🧐",
+        "Nice one! 🎉",
+        "Keep the conversation going! 💬",
+        "Interesting take! What do others think? 🤔",
+        "Great to hear from you! 💡"
+    ]
+    content = str(message.get('content', ''))
+    
+    if not isinstance(content, str):
+        raise ValueError(f"message content is not a string: {type(content)}")
+
+    # search for keyword 
+    for keyword, response in keyword_responses.items():
+        if keyword in content.lower():
+            return response
+        
+    # Check message length
+    if len(content) < 10:
+        return "That was a short but impactful one! ✨"
+    elif len(content) > 200:
+        return "Wow, thanks for the detailed submission! 📚 Your thoughts are valuable!"
+    
+    # give back random if no keyword found
+    return random.choice(generic_responses)
+
+@app.route('/', methods=['PATCH'])
+def update_message():
+    # fetch channels from server
+    # check authorization header
+    if not check_authorization(request):
+        return "Invalid authorization", 400
+    
+    # check if data is present
+    patch_data = request.json
+    if not patch_data or 'timestamp' not in patch_data:
+        return "No timestamp", 400
+
+    messages = read_messages()
+    message_found = False
+
+    # search for message to be updated
+    for message in messages:
+        if message['timestamp'] == patch_data['timestamp']:
+            if 'extra' in patch_data:
+                message['extra'] = patch_data['extra']  # patch the new extra field
+            message_found = True
+            break
+    
+    if not message_found:
+        return "Message not found", 404
+
+    save_messages(messages)
+    return "OK", 200
+
+
 # Set the maximum number of messages to store
-MAX_MESSAGES = 5  # change this value to set your desired limit
+MAX_MESSAGES = 10  # change this value to set your desired limit
 
 def read_messages():
     global CHANNEL_FILE

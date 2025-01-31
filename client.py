@@ -92,7 +92,10 @@ def post_message():
         return "Error posting message: "+str(response.text), 400
     return redirect(url_for('show_channel')+'?channel='+urllib.parse.quote(post_channel))
 
+@app.template_filter('datetimeformat')
+def datetimeformat(value, format="%d.%m.%Y %H:%M"):
+    return datetime.datetime.fromisoformat(value).strftime(format)
 
 # Start development web server
 if __name__ == '__main__':
-    app.run(port=5005, debug=True)
+    app.run(port=5004, debug=True)

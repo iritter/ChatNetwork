@@ -105,7 +105,7 @@
         }
 
         .form-container input[type="text"] {
-            width: 100%;
+            width: calc(100% - 20px);
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #444;
@@ -118,6 +118,7 @@
         .form-container input[type="submit"] {
             background-color: #6200ea;
             color: white;
+            margin-top: 10px;
             padding: 12px 20px;
             border: none;
             border-radius: 5px;
@@ -126,7 +127,7 @@
         }
 
         .form-container input[type="submit"]:hover {
-            background-color: #3700b3;
+            background-color:  #bb86fc;
         }
 
         .back-link {
@@ -170,6 +171,14 @@
         .flash-message.error {
             background-color: lightcoral;
         }
+
+        .automatic-reply {
+            margin-top: 8px;
+            padding: 2px;
+            background-color: #74777a;
+            border-left: 4px solid #bb86fc;
+            font-style: italic;
+        }
     </style>
 </head>
 
@@ -189,7 +198,7 @@
                 ✨ <strong>How it works:</strong><br>
                 🔸 Post your confession - completely anonymous!<br>
                 🔸 Others can react with emojis 😆❤️👍<br>
-                🔸 Posts disappear after a few hours - so enjoy the moment!
+                🔸 Posts disappear after 24 hours - so enjoy the moment!
             </p>
 
             <p style="text-align: center;">Be honest, be funny, be bold - but stay respectful! 🫶</p>
@@ -210,15 +219,15 @@
         <div class="form-container">
             <form action="post" method="post">
                 <input type="hidden" name="channel" value="{{ channel.endpoint | urlencode }}">
-                <label for="sender">Sender: </label>
+                <label for="sender">😈 Make a confession 😇</label>
                 <input type="text" name="sender" id="sender" placeholder="Your Name or Alias" required><br>
-                <label for="content">Message: </label>
+                <label for="content"></label>
                 <input type="text" name="content" id="content" placeholder="Write your confession or funny moment..."
                     required><br>
-                <input type="submit" value="Post Confession">
+                <input type="submit" value="Submit to Whisper Wall">
             </form>
         </div>
-    
+
 
         {% if channel %}
         <div class="message-list">
@@ -226,14 +235,21 @@
             <div class="message">
                 <h2>{{ message.sender }}</h2>
                 <p>{{ message.content }}</p>
-                <p class="timestamp">{{ message.timestamp }}</p>
+                <p class="timestamp">{{ message.timestamp | datetimeformat}}</p>
 
                 <!-- Reaction Buttons -->
                 <div class="reaction-buttons">
-                    <button>👍</button>
-                    <button>❤️</button>
-                    <button>😂</button>
+                    <button>👍 {{ message.extra[0] }}</button>
+                    <button>❤️ {{ message.extra[1] }}</button>
+                    <button>😂 {{ message.extra[2] }}</button>
                 </div>
+
+                {% if message.extra[3] %}
+                <div class="automatic-reply">
+                    <p><strong></strong> {{ message.extra[3] }}</p>
+                </div>
+                {% endif %}
+
             </div>
             {% endfor %}
         </div>
