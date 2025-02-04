@@ -106,7 +106,7 @@ def send_message():
     
     #automatic_reply = "Thanks for sharing!"
     automatic_reply = gen_reply(message)
-    extra = [0, 0, 0, automatic_reply]
+    extra = [0, automatic_reply, []]
 
     # add message to messages
     messages = read_messages()
