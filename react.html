@@ -11,9 +11,8 @@
 <body>
     <div id="root"></div>
 
-    <!-- React 17 CDN -->
-    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <script type="text/babel">
@@ -68,21 +67,14 @@
                 </div>
             );
         }
-
         async function submitMessage(newMessage) {
             const timestamp = new Date().toISOString();
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070", {
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/", {
                 method: "POST",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'authkey Sdh-aKo34-hf' // Make sure this key is valid
-                },
-                body: JSON.stringify({
-                    content: newMessage.content,
-                    sender: newMessage.sender,
-                    timestamp: timestamp
-                }),
+                body: JSON.stringify((channel['endpoint'],
+                    headers = { 'Authorization': 'authkey ' + channel['authkey'] }, //WIE DEN AUTHKEY REINMACHEN?? WO KEYS SPEICHERN?
+                    json = { 'content': newMessage.content, 'sender': newMessage.sender, 'timestamp': timestamp })),
             });
 
             if (response.ok) {
@@ -97,42 +89,27 @@
             const [messages, setMessages] = React.useState([]);
             React.useEffect(() => {
                 fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/messages", { cache: "no-cache" })
-                    .then(response => {
-                        // Check if the response is okay (status 200)
-                        if (!response.ok) {
-                            throw new Error(`Error fetching messages: ${response.statusText}`);
-                        }
-                        return response.json();  // Only parse if response is OK
-                    })
+                    .then(response => response.json())
                     .then(data => {
                         console.log("Fetched Messages: ", data);
                         setMessages(data);
                     })
-                    .catch(error => {
-                        console.error("Error fetching messages:", error);
-                        // Optional: Show a user-friendly error message
-                    });
+                    .catch(error => console.error("Error fetching messages:", error));
             }, []); // Runs once on mount
-
             return (
                 <div>
-                    {messages.length > 0 ? (
-                        messages.map((message, index) => (
-                            <MessageBox
-                                key={index}
-                                sender={message.sender}
-                                content={message.content}
-                                timestamp={message.timestamp}
-                                extra={message.extra}
-                            />
-                        ))
-                    ) : (
-                        <p>No messages to display.</p>
-                    )}
+                    {messages.map((message, index) => (
+                        <MessageBox
+                            key={index}
+                            sender={message.sender}
+                            content={message.content}
+                            timestamp={message.timestamp}
+                            extra={message.extra}
+                        />
+                    ))}
                 </div>
             );
         }
-
 
         function MessageBox({ sender, content, timestamp, extra }) {
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
@@ -181,9 +158,8 @@
             );
         }
 
-        // React 17 way of rendering
         ReactDOM.render(
-            <div>
+            <div >
                 <Header />
                 <div className="container">
                     <div className="left-column">
@@ -198,9 +174,7 @@
                     </div>
                 </div>
             </div>,
-            document.getElementById('root')
-        );
-
+            document.getElementById('root'));
     </script>
 </body>
 
