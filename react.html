@@ -68,22 +68,29 @@
             );
         }
         async function submitMessage(newMessage) {
-            const timestamp = new Date().toISOString();
+        const timestamp = new Date().toISOString();
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/hub", {
-                method: "POST",
-                body: JSON.stringify((channel['endpoint'],
-                    headers = { 'Authorization': 'authkey ' +  'Crr-K24d-2N' }, //WIE DEN AUTHKEY REINMACHEN?? WO KEYS SPEICHERN?
-                    json = { 'content': newMessage.content, 'sender': newMessage.sender, 'timestamp': timestamp })),
-            });
+        const response = await fetch("http://vm146.rz.uni-osnabrueck.de/hub", {
+            method: "POST",
+            headers: { 
+                'Authorization': 'authkey ' + 'Crr-K24d-2N', 
+            },
+            body: JSON.stringify({
+                'channel': "Confession Wall",  // Assuming this is needed
+                'content': newMessage.content,
+                'sender': newMessage.sender,
+                'timestamp': timestamp
+            }),
+        });
 
-            if (response.ok) {
-                const responseData = await response.json();
-                console.log("Success:", responseData);
-            } else {
-                console.error("Error with posting message:", response.status);
-            }
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log("Success:", responseData);
+        } else {
+            console.error("Error with posting message:", response.status);
         }
+    }
+
 
         function MessageList() {
             const [messages, setMessages] = React.useState([]);
