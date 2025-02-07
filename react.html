@@ -11,9 +11,9 @@
 <body>
     <div id="root"></div>
 
+    <!-- React 17 CDN -->
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
-
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <script type="text/babel">
@@ -68,30 +68,30 @@
                 </div>
             );
         }
+
         async function submitMessage(newMessage) {
-        const timestamp = new Date().toISOString();
+            const timestamp = new Date().toISOString();
 
-        const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070", {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'authkey Sdh-aKo34-hf' // Make sure this key is valid
-            },
-            body: JSON.stringify({
-                content: newMessage.content,
-                sender: newMessage.sender,
-                timestamp: timestamp
-            }),
-        });
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070", {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'authkey Sdh-aKo34-hf' // Make sure this key is valid
+                },
+                body: JSON.stringify({
+                    content: newMessage.content,
+                    sender: newMessage.sender,
+                    timestamp: timestamp
+                }),
+            });
 
-        if (response.ok) {
-            const responseData = await response.json();
-            console.log("Success:", responseData);
-        } else {
-            console.error("Error with posting message:", response.status);
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log("Success:", responseData);
+            } else {
+                console.error("Error with posting message:", response.status);
+            }
         }
-    }
-
 
         function MessageList() {
             const [messages, setMessages] = React.useState([]);
@@ -166,8 +166,8 @@
             );
         }
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(
+        // React 17 way of rendering
+        ReactDOM.render(
             <div>
                 <Header />
                 <div className="container">
@@ -182,7 +182,8 @@
                         <MessageList />
                     </div>
                 </div>
-            </div>
+            </div>,
+            document.getElementById('root')
         );
 
     </script>
