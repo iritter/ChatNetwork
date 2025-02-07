@@ -97,27 +97,42 @@
             const [messages, setMessages] = React.useState([]);
             React.useEffect(() => {
                 fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/messages", { cache: "no-cache" })
-                    .then(response => response.json())
+                    .then(response => {
+                        // Check if the response is okay (status 200)
+                        if (!response.ok) {
+                            throw new Error(`Error fetching messages: ${response.statusText}`);
+                        }
+                        return response.json();  // Only parse if response is OK
+                    })
                     .then(data => {
                         console.log("Fetched Messages: ", data);
                         setMessages(data);
                     })
-                    .catch(error => console.error("Error fetching messages:", error));
+                    .catch(error => {
+                        console.error("Error fetching messages:", error);
+                        // Optional: Show a user-friendly error message
+                    });
             }, []); // Runs once on mount
+
             return (
                 <div>
-                    {messages.map((message, index) => (
-                        <MessageBox
-                            key={index}
-                            sender={message.sender}
-                            content={message.content}
-                            timestamp={message.timestamp}
-                            extra={message.extra}
-                        />
-                    ))}
+                    {messages.length > 0 ? (
+                        messages.map((message, index) => (
+                            <MessageBox
+                                key={index}
+                                sender={message.sender}
+                                content={message.content}
+                                timestamp={message.timestamp}
+                                extra={message.extra}
+                            />
+                        ))
+                    ) : (
+                        <p>No messages to display.</p>
+                    )}
                 </div>
             );
         }
+
 
         function MessageBox({ sender, content, timestamp, extra }) {
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
