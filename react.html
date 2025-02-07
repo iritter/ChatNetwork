@@ -76,7 +76,7 @@
             formData.append('content', newMessage.content);
             formData.append('sender', newMessage.sender);
 
-            const response = await fetch('http://vm146.rz.uni-osnabrueck.de/hub/u070/post', {
+            const response = await fetch('http://vm146.rz.uni-osnabrueck.de/u070/post', {
                 method: "POST",
                 body: formData // Send as form data instead of JSON
             });
@@ -96,7 +96,7 @@
             const [messages, setMessages] = React.useState([]);
             // Correct API call to fetch messages
             React.useEffect(() => {
-                fetch('http://vm146.rz.uni-osnabrueck.de/hub/u070/messages', { cache: "no-cache" })
+                fetch('http://vm146.rz.uni-osnabrueck.de/u070/messages', { cache: "no-cache" })
                     .then(response => response.json())
                     .then(data => {
                         console.log("Fetched Messages: ", data);
