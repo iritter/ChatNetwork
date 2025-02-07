@@ -11,8 +11,9 @@
 <body>
     <div id="root"></div>
 
-    <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
     <script type="text/babel">
@@ -68,22 +69,29 @@
             );
         }
         async function submitMessage(newMessage) {
-            const timestamp = new Date().toISOString();
+        const timestamp = new Date().toISOString();
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/", {
-                method: "POST",
-                body: JSON.stringify((channel['endpoint'],
-                    headers = { 'Authorization': 'authkey ' + channel['authkey'] }, //WIE DEN AUTHKEY REINMACHEN?? WO KEYS SPEICHERN?
-                    json = { 'content': newMessage.content, 'sender': newMessage.sender, 'timestamp': timestamp })),
-            });
+        const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'authkey Sdh-aKo34-hf' // Make sure this key is valid
+            },
+            body: JSON.stringify({
+                content: newMessage.content,
+                sender: newMessage.sender,
+                timestamp: timestamp
+            }),
+        });
 
-            if (response.ok) {
-                const responseData = await response.json();
-                console.log("Success:", responseData);
-            } else {
-                console.error("Error with posting message:", response.status);
-            }
+        if (response.ok) {
+            const responseData = await response.json();
+            console.log("Success:", responseData);
+        } else {
+            console.error("Error with posting message:", response.status);
         }
+    }
+
 
         function MessageList() {
             const [messages, setMessages] = React.useState([]);
@@ -158,8 +166,9 @@
             );
         }
 
-        ReactDOM.render(
-            <div >
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(
+            <div>
                 <Header />
                 <div className="container">
                     <div className="left-column">
@@ -173,8 +182,9 @@
                         <MessageList />
                     </div>
                 </div>
-            </div>,
-            document.getElementById('root'));
+            </div>
+        );
+
     </script>
 </body>
 

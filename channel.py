@@ -19,12 +19,13 @@ app = Flask(__name__)
 app.config.from_object(__name__ + '.ConfigClass')  # configuration
 app.app_context().push()  # create an app context before initializing db
 
+
 HUB_URL = 'http://vm146.rz.uni-osnabrueck.de/hub'
 HUB_AUTHKEY = 'Crr-K24d-2N'
 CHANNEL_AUTHKEY = 'Sdh-aKo34-hf' #--- IST GEÄNDERT ---#
 CHANNEL_NAME = "Confession Wall"
 #CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
-CHANNEL_ENDPOINT = CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u070"
+CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u070"
 CHANNEL_FILE = 'messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 
