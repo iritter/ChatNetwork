@@ -70,21 +70,22 @@
         async function submitMessage(newMessage) {
             const timestamp = new Date().toISOString();
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070", {
+            // Preparing form data to match Flask's expectations
+            const formData = new FormData();
+            formData.append('channel', 'desiredChannelName'); // Replace with actual channel
+            formData.append('content', newMessage.content);
+            formData.append('sender', newMessage.sender);
+
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/post", {
                 method: "POST",
-                headers: {
-                    'Authorization': 'authkey Sdh-aKo34-hf', // Make sure this key is valid
-                },
-                body: JSON.stringify({
-                    content: newMessage.content,
-                    sender: newMessage.sender,
-                    timestamp: timestamp
-                }),
+                body: formData // Send as form data instead of JSON
             });
 
+            const responseText = await response.text();
+            console.log(responseText); // Log the response to check if it's correct
+
             if (response.ok) {
-                const responseData = await response.json();
-                console.log("Success:", responseData);
+                console.log("Message posted successfully");
             } else {
                 console.error("Error with posting message:", response.status);
             }
