@@ -70,42 +70,32 @@
         async function submitMessage(newMessage) {
             const timestamp = new Date().toISOString();
 
-            // Preparing form data to match Flask's expectations
-            const formData = new FormData();
-            formData.append('channel', 'desiredChannelName'); // Replace with actual channel
-            formData.append('content', newMessage.content);
-            formData.append('sender', newMessage.sender);
-
-            const response = await fetch('http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/post', {
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/", {
                 method: "POST",
-                body: formData // Send as form data instead of JSON
+                body: JSON.stringify((channel['endpoint'],
+                    headers = { 'Authorization': 'authkey ' + 'Crr-K24d-2N' }, //WIE DEN AUTHKEY REINMACHEN?? WO KEYS SPEICHERN?
+                    json = { 'content': newMessage.content, 'sender': newMessage.sender, 'timestamp': timestamp })),
             });
 
-            const responseText = await response.text();
-            console.log(responseText); // Log the response to check if it's correct
-
             if (response.ok) {
-                console.log("Message posted successfully");
+                const responseData = await response.json();
+                console.log("Success:", responseData);
             } else {
                 console.error("Error with posting message:", response.status);
             }
         }
 
-
         function MessageList() {
             const [messages, setMessages] = React.useState([]);
-            // Correct API call to fetch messages
             React.useEffect(() => {
-            // Update the fetch URL to reflect the new directory
-                fetch('http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/messages.json', { cache: "no-cache" })
+                fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/messages", { cache: "no-cache" })
                     .then(response => response.json())
                     .then(data => {
                         console.log("Fetched Messages: ", data);
                         setMessages(data);
                     })
                     .catch(error => console.error("Error fetching messages:", error));
-            }, []);
-
+            }, []); // Runs once on mount
             return (
                 <div>
                     {messages.map((message, index) => (
