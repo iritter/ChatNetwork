@@ -43,19 +43,15 @@
 
         function MessageInput() {
             const [name, setName] = React.useState("");
-            const [message, setMessage] = React.useState("");
+            const [content, setContent] = React.useState("");
 
             const onSubmit = async () => {
-                if (!name.trim() || !message.trim()) {
+                if (!name.trim() || !content.trim()) {
                     alert("Please enter a name and a message.");
                     return;
                 }
 
-                const newMessage = {
-                    sender: name,
-                    content: message,
-                }
-                submitMessage(newMessage);
+                submitMessage(name, content);
             }
 
             return (
@@ -67,11 +63,11 @@
                 </div>
             );
         }
-        async function submitMessage(newMessage) {
+        async function submitMessage(name, content) {
             const timestamp = new Date().toISOString();
             const newMessage = {
-                content: newMessage.content, 
-                sender: newMessage.sender, 
+                sender: name, 
+                content: content, 
                 timestamp: timestamp
             };
 
