@@ -84,7 +84,11 @@
         "extra": [
             0,
             "No judgment here! Everyone\u2019s opinion matters. \ud83d\ude0a",
-            "Hahah"
+
+            [
+                "I love dogs!", 
+                "I do that to. My dog fluffy is the best listener!"
+            ]
         ]
     }
 ]
