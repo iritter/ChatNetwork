@@ -69,18 +69,21 @@
         }
         async function submitMessage(newMessage) {
             const timestamp = new Date().toISOString();
+            const newMessage = {
+                content: newMessage.content, 
+                sender: newMessage.sender, 
+                timestamp: timestamp
+            };
+
+            console.log(JSON.stringify(newMessage));
 
             const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/channel.wsgi", {
                 method: "POST",
                 headers: { 
-                    'Authorization': 'Sdh-aKo34-hf',  // Correct auth header placement
-                    'Content-Type': 'application/json'  // Important to define JSON format
+                    'Authorization': 'Sdh-aKo34-hf', 
+                    'Content-Type': 'application/json'  
                 },
-                body: JSON.stringify({
-                    content: newMessage.content, 
-                    sender: newMessage.sender, 
-                    timestamp: timestamp
-                }),
+                body: JSON.stringify(newMessage),
             });
 
             if (response.ok) {
