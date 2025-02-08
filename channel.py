@@ -164,34 +164,34 @@ def gen_reply(message):
     # give back random if no keyword found
     return random.choice(generic_responses)
 
-@app.route('/', methods=['PATCH'])
-def update_message():
-    # fetch channels from server
-    # check authorization header
-    if not check_authorization(request):
-        return "Invalid authorization update", 400
+# @app.route('/', methods=['PATCH'])
+# def update_message():
+#     # fetch channels from server
+#     # check authorization header
+#     if not check_authorization(request):
+#         return "Invalid authorization update", 400
     
-    # check if data is present
-    patch_data = request.json
-    if not patch_data or 'timestamp' not in patch_data:
-        return "No timestamp", 400
+#     # check if data is present
+#     patch_data = request.json
+#     if not patch_data or 'timestamp' not in patch_data:
+#         return "No timestamp", 400
 
-    messages = read_messages()
-    message_found = False
+#     messages = read_messages()
+#     message_found = False
 
-    # search for message to be updated
-    for message in messages:
-        if message['timestamp'] == patch_data['timestamp']:
-            if 'extra' in patch_data:
-                message['extra'] = patch_data['extra']  # patch the new extra field
-            message_found = True
-            break
+#     # search for message to be updated
+#     for message in messages:
+#         if message['timestamp'] == patch_data['timestamp']:
+#             if 'extra' in patch_data:
+#                 message['extra'] = patch_data['extra']  # patch the new extra field
+#             message_found = True
+#             break
     
-    if not message_found:
-        return "Message not found", 404
+#     if not message_found:
+#         return "Message not found", 404
 
-    save_messages(messages)
-    return "OK", 200
+    # save_messages(messages)
+    # return "OK", 200
 
 
 # Set the maximum number of messages to store
