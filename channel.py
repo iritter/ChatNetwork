@@ -71,7 +71,7 @@ def check_authorization(request):
 def health_check():
     global CHANNEL_NAME
     if not check_authorization(request):
-        return "Invalid authorization", 400
+        return "Invalid authorization /health", 400
     return jsonify({'name':CHANNEL_NAME}),  200
 
 # GET: Return list of messages
@@ -79,7 +79,7 @@ def health_check():
 def home_page():
     print("Request.headers: ", request.headers)
     if not check_authorization(request):
-        return "Invalid authorization", 400
+        return "Invalid authorization home", 400
     # fetch channels from server
     return jsonify(read_messages())
 
@@ -89,7 +89,7 @@ def send_message():
     # fetch channels from server
     # check authorization header
     if not check_authorization(request):
-        return "Invalid authorization", 400
+        return "Invalid authorization post", 400
     # check if message is present
     message = request.json
     if not message:
@@ -169,7 +169,7 @@ def update_message():
     # fetch channels from server
     # check authorization header
     if not check_authorization(request):
-        return "Invalid authorization", 400
+        return "Invalid authorization update", 400
     
     # check if data is present
     patch_data = request.json
