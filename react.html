@@ -58,7 +58,7 @@
                 <div className="MessageBox">
                     <h3>Make a confession 😈 😇</h3>
                     <input type="text" placeholder="Your name or alias" value={name} onChange={(e) => setName(e.target.value)} />
-                    <input type="text" placeholder="Write your confession or funny moment..." value={content} onChange={(e) => setMessage(e.target.value)} />
+                    <input type="text" placeholder="Write your confession or funny moment..." value={content} onChange={(e) => setContent(e.target.value)} />
                     <button className="new-message-button" onClick={onSubmit}>Submit to Whisper Wall</button>
                 </div>
             );
