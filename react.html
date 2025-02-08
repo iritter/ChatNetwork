@@ -70,10 +70,10 @@
         async function submitMessage(newMessage) {
             const timestamp = new Date().toISOString();
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/ChatNetwork/channel.wsgi", {
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u070/channel.wsgi", {
                 method: "POST",
                 headers: { 
-                    'Authorization': 'Crr-K24d-2N',  // Correct auth header placement
+                    'Authorization': 'Sdh-aKo34-hf',  // Correct auth header placement
                     'Content-Type': 'application/json'  // Important to define JSON format
                 },
                 body: JSON.stringify({
