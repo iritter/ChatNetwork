@@ -111,6 +111,7 @@ def send_message():
 
     # add message to messages
     messages = read_messages()
+
     messages.append({'content': message['content'],
                      'sender': message['sender'],
                      'timestamp': message['timestamp'],
@@ -205,6 +206,8 @@ def read_messages():
         return []
     try:
         messages = json.load(f)
+        
+
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
