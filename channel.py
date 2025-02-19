@@ -28,8 +28,9 @@ CHANNEL_NAME = "Confession Wall"
 #CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
 CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi"
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
-absolute_path_json = os.path.abspath('messages.json')
-CHANNEL_FILE = absolute_path_json
+# absolute_path_json = os.path.abspath('messages.json')
+# CHANNEL_FILE = absolute_path_json
+CHANNEL_FILE = 'messages.json'
 
 @app.cli.command('register')
 def register_command():
