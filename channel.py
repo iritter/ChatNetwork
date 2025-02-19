@@ -6,6 +6,7 @@ import json
 import requests
 from datetime import datetime, timedelta
 import random
+import os 
 
 # Class-based application configuration
 class ConfigClass(object):
@@ -26,8 +27,9 @@ CHANNEL_AUTHKEY = 'Sdh-aKo34-hf' #--- IST GEÄNDERT ---#
 CHANNEL_NAME = "Confession Wall"
 #CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
 CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi"
-CHANNEL_FILE = 'messages.json'
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
+absolute_path_json = os.path.abspath('../massages.json')
+CHANNEL_FILE = 'absolute_path_json'
 
 @app.cli.command('register')
 def register_command():
