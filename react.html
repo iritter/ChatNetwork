@@ -95,7 +95,7 @@
         function MessageList() {
             const [messages, setMessages] = React.useState([]);
 
-            useEffect(() => {
+            React.useEffect(() => {
                 fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
                     method: "GET",
                     headers: {
