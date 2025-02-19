@@ -105,8 +105,10 @@ def send_message():
     if not 'timestamp' in message:
         return "No timestamp", 400
     
+    # fix timestamp 
     timestamp_formatted = datetime.fromisoformat(message['timestamp'].rstrip("Z"))
-    message['timestamp'] = timestamp_formatted
+    message['timestamp'] = timestamp_formatted.isoformat()  
+
     automatic_reply = gen_reply(message)
     extra = [0, automatic_reply, []]
 
