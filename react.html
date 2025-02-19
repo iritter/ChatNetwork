@@ -73,7 +73,7 @@
 
             console.log(JSON.stringify(newMessage));
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/ChatNetwork/channel.wsgi", {
                 method: "POST",
                 headers: { 
                     'Authorization': 'authkey Sdh-aKo34-hf', 
@@ -96,7 +96,7 @@
             const [messages, setMessages] = React.useState([]);
 
             React.useEffect(() => {
-                fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                fetch("http://vm146.rz.uni-osnabrueck.de/u089/ChatNetwork/channel.wsgi", {
                     method: "GET",
                     headers: {
                         Authorization: "authkey Sdh-aKo34-hf",
