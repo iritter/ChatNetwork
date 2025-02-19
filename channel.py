@@ -28,9 +28,10 @@ CHANNEL_NAME = "Confession Wall"
 #CHANNEL_ENDPOINT = "http://localhost:5005" # don't forget to adjust in the bottom of the file
 CHANNEL_ENDPOINT = "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi"
 CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
-# absolute_path_json = os.path.abspath('messages.json')
-# CHANNEL_FILE = absolute_path_json
 CHANNEL_FILE = 'messages.json'
+
+# Set the maximum number of messages to store
+MAX_MESSAGES = 15  # change this value to set your desired limit
 
 @app.cli.command('register')
 def register_command():
@@ -103,12 +104,7 @@ def send_message():
         return "No sender", 400
     if not 'timestamp' in message:
         return "No timestamp", 400
-    # if not 'extra' in message:
-    #     extra = None
-    # else:
-    #     extra = message['extra']
     
-    #automatic_reply = "Thanks for sharing!"
     automatic_reply = gen_reply(message)
     extra = [0, automatic_reply, []]
 
@@ -168,9 +164,6 @@ def gen_reply(message):
     # give back random if no keyword found
     return random.choice(generic_responses)
 
-# Set the maximum number of messages to store
-MAX_MESSAGES = 10  # change this value to set your desired limit
-
 def read_messages():
     global CHANNEL_FILE
     try:
@@ -180,37 +173,36 @@ def read_messages():
     try:
         messages = json.load(f)
         
-
     except json.decoder.JSONDecodeError:
         messages = []
     f.close()
     
     # Return only the most recent MAX_MESSAGES messages
     current_time = datetime.now()
-    valid_messages = []
-    for message in messages:
-            # Ensure the message has a 'timestamp' and it's a valid datetime string
-            if 'timestamp' in message:
-                try:
-                    message_time = datetime.fromisoformat(message['timestamp'])
-                except ValueError:
-                    continue # If the timestamp is invalid, skip this message
-
-                # Check if the message is within the last 24 hours
-                if current_time - message_time <= timedelta(hours=24):
-                    valid_messages.append(message)
+    valid_messages = [
+        message for message in messages
+        if "timestamp" in message and is_valid_timestamp(message["timestamp"], current_time)
+    ]
     
-    # Return only the most recent MAX_MESSAGES valid messages
-    return valid_messages[-MAX_MESSAGES:]
+    # Return only messagas with valid time stamps
+    return valid_messages
+
+def is_valid_timestamp(timestamp, current_time):
+    try:
+        message_time = datetime.fromisoformat(timestamp)
+        return current_time - message_time <= timedelta(hours=24)
+    except ValueError:
+        return False  #invalid timestamp value
 
 def save_messages(messages):
     global CHANNEL_FILE
+    # sort from oldest to newest message
+    messages.sort(key=lambda x: x["timestamp"])  
     # Ensure we don't exceed the max number of messages
-    if len(messages) > MAX_MESSAGES:
-        messages = messages[-MAX_MESSAGES:]
+    messages = messages[-MAX_MESSAGES:]
     
     with open(CHANNEL_FILE, 'w') as f:
-        json.dump(messages, f)
+        json.dump(messages, f, indent=4)
 
 # Start development web server
 # run flask --app channel.py register
