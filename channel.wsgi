@@ -1,3 +1,3 @@
-from ChatNetwork.channel import app
+from channel import app
 application = app
 
