@@ -196,13 +196,18 @@
             return (
                 <div>
                     <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
-                        {channels.map(channel => (
-                            <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
-                                <a href={channel.endpoint} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none" }}>
-                                    {channel.name}
-                                </a>
-                            </li>
-                        ))}
+                        {channels.map(channel => {
+                            // Construct the correct URL
+                            const channelUrl = `http://vm146.rz.uni-osnabrueck.de/client/show?channel=${encodeURIComponent(channel.endpoint)}`;
+
+                            return (
+                                <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
+                                    <a href={channelUrl} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none" }}>
+                                        {channel.name}
+                                    </a>
+                                </li>
+                            );
+                        })}
                     </ul>
                 </div>
             );
