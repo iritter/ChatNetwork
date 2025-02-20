@@ -23,6 +23,36 @@
             );
         }
 
+        function NameDialog({name, setName}) {
+            return <dialog open>
+                      <article>
+                        <header>
+                          <p>
+                            <strong>What's your name?</strong>
+                          </p>
+                        </header>
+                        <p>
+                          <input type="text"
+                                     onKeyDown={({key, target}) => key === 'Enter' && setName(target.value)}/>
+                        </p>
+                      </article>
+                    </dialog>
+        }
+
+        function Container() {
+            const [name, setName] = React.useState("");
+
+            if (name) {
+                return <div><h1>Hello, {name}!</h1>
+                    <button onClick={() => setName("")}>cancel</button>
+                </div>;
+            } else {
+                return (
+                    <NameDialog name={name} setName={setName}/>
+                );
+            }
+        }
+
         function WelcomeMessage() {
             return (
                 <div className="WelcomeMessage">
@@ -229,6 +259,13 @@
                         <MessageList />
                     </div>
                 </div>
+
+                {/* Include the required section */}
+                <section>
+                    <Container />
+                </section>
+
+                <footer>AI and the Web 2025</footer>
             </div>,
             document.getElementById('root')
         );
