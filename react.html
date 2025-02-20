@@ -183,13 +183,39 @@
             );
         }
 
+
+        function ChannelList() {
+            const [channels, setChannels] = React.useState([]);
+
+            React.useEffect(() => {
+                fetch("http://vm146.rz.uos.de/hub/channels")
+                    .then(response => response.json())
+                    .then(data => setChannels(data.channels));
+            }, []);
+
+            return (
+                <div>
+                    <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
+                        {channels.map(channel => (
+                            <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
+                                <a href={channel.endpoint} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none" }}>
+                                    {channel.name}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            );
+        }
+
+
         ReactDOM.render(
-            <div >
+            <div>
                 <Header />
                 <div className="container">
                     <div className="left-column">
                         <h2>Your Channels</h2>
-                        <p>List of Channels Loading...</p>
+                        <ChannelList /> {/* Insert ChannelList here */}
                     </div>
 
                     <div className="right-column">
@@ -199,7 +225,9 @@
                     </div>
                 </div>
             </div>,
-            document.getElementById('root'));
+            document.getElementById('root')
+        );
+
     </script>
 </body>
 
