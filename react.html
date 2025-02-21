@@ -237,7 +237,7 @@
         }
 
 
-        function MessageBox({ sender, content, timestamp, extra }) {
+        function MessageBox({ sender, content, timestamp, extra, selectedChannel}) {
             const [comment, setComment] = React.useState("");
 
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
@@ -277,6 +277,7 @@
                     console.error("Error:", response.status, errorText);
                 }
             }
+
             async function add_comment() {
                 const newMessage = {
                     sender: "add-comment",
@@ -305,7 +306,7 @@
             }
 
 
-            if (extra !== null) {
+            if (selectedChannel.name == "Confession Wall") {
                 return (
                     <div className="MessageBox">
                         <div className="message-header">
