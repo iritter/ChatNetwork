@@ -197,24 +197,37 @@
             React.useEffect(() => {
                 if (!selectedChannel) return;
 
-                fetch(selectedChannel.endpoint, {
-                    method: "GET",
-                    headers: {
-                        Authorization: `authkey ${selectedChannel.authkey}`,
-                    },
-                })
-                    .then((response) => {
-                        if (!response.ok) {
-                            throw new Error(`HTTP error! Status: ${response.status}`);
-                        }
-                        return response.json();
+                const fetchMessages = () => {
+                    fetch(selectedChannel.endpoint, {
+                        method: "GET",
+                        headers: {
+                            Authorization: `authkey ${selectedChannel.authkey}`,
+                        },
                     })
-                    .then((data) => {
-                        setMessages(Array.isArray(data) ? data : []);
-                    })
-                    .catch((error) => console.error("Error fetching messages:", error));
+                        .then((response) => {
+                            if (!response.ok) {
+                                throw new Error(`HTTP error! Status: ${response.status}`);
+                            }
+                            return response.json();
+                        })
+                        .then((data) => {
+                            setMessages(Array.isArray(data) ? data : []);
+                        })
+                        .catch((error) => console.error("Error fetching messages:", error));
+                };
 
+                // Fetch immediately on mount
+                fetchMessages();
+
+                // Set interval to fetch messages every 3 seconds
+                const interval = setInterval(fetchMessages, 3000);
+
+                // Cleanup function to clear interval when component unmounts or selectedChannel changes
+                return () => clearInterval(interval);
             }, [selectedChannel]);
+
+
+
 
             return (
                 <div>
