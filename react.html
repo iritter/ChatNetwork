@@ -229,8 +229,8 @@
             return (
                 <div>
                     <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
-                        {channels.map(channel => (
-                            <li key={channel.id || channel.endpoint} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
+                        {channels.map((channel, index) => (
+                            <li key={`${channel.id || channel.endpoint}-${index}`} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
                                 <button
                                     onClick={() => setSelectedChannel(channel.endpoint)}
                                     style={{ background: "none", border: "none", color: "white", textDecoration: "none", cursor: "pointer" }}
