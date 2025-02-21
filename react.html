@@ -109,38 +109,60 @@
                 setContent("");
             };
 
-            return (
-                <div className="MessageBox">
-                    <h3>
-                        {selectedChannel?.name === "Confession Wall"
-                            ? "Make a confession 😈 😇"
-                            : "Write a comment 😇"}
-                    </h3>
-                    <input
-                        type="text"
-                        placeholder="Your name or alias"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder={
-                            selectedChannel?.name === "Confession Wall"
-                                ? "Write your confession or funny moment..."
-                                : "Please insert text."
-                        }
-                        value={content}
-                        onChange={(e) => setContent(e.target.value)}
-                    />
-                    <button className="new-message-button" onClick={onSubmit}>
-                        {selectedChannel?.name === "Confession Wall"
-                            ? "Submit to Whisper Wall"
-                            : "Submit"}
-                    </button>
-                </div>
-            );
+            if (selectedChannel && selectedChannel.name === "Confession Wall") {
+                // If the selected channel is "Confession Wall"
+                return (
+                    <div className="MessageBox">
+                        <h3>Make a confession 😈 😇</h3>
+                        <input
+                            type="text"
+                            placeholder="Your name or alias"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <textarea
+                            placeholder="Write your confession or funny moment..."
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            rows={3}
+                        />
+                        <button
+                            className="new-message-button"
+                            onClick={onSubmit}
+                            disabled={!name.trim() || !content.trim()} // Prevent empty submissions
+                        >
+                            Submit to Whisper Wall
+                        </button>
+                    </div>
+                );
+            } else {
+                // For any other selected channel
+                return (
+                    <div className="MessageBox">
+                        <h3>Write a comment 😇</h3>
+                        <input
+                            type="text"
+                            placeholder="Your name or alias"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <textarea
+                            placeholder="Please insert text."
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                            rows={3}
+                        />
+                        <button
+                            className="new-message-button"
+                            onClick={onSubmit}
+                            disabled={!name.trim() || !content.trim()} // Prevent empty submissions
+                        >
+                            Submit
+                        </button>
+                    </div>
+                );
+            }
         }
-
 
         
         async function submitMessage(name, content) {
