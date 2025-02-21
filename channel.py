@@ -201,10 +201,26 @@ def is_valid_timestamp(timestamp, current_time):
 
 def save_messages(messages):
     global CHANNEL_FILE
+    
+    increment_messages = []
+
+    for msg in messages[:]:
+        if msg.get("content") == "increment-reaction":
+            increment_messages.append(msg)
+            messages.remove(msg)
+
+    while increment_messages:
+        increment_msg = increment_messages.pop(0)  
+        reaction_timestamp = increment_msg.get("timestamp")
+        
+        for msg in messages:
+            if msg.get("timestamp") == reaction_timestamp:
+                msg["extra"][0] += 1
+                break  
+
     # sort from oldest to newest message
     messages.sort(key=lambda x: x["timestamp"])  
 
-    if 
     # Ensure we don't exceed the max number of messages
     messages = messages[-MAX_MESSAGES:]
     
