@@ -178,7 +178,6 @@ html, body {
 .submit-button:hover {
   background-color: darkviolet;
 }
-
 .modal {
   position: fixed;
   background: white;
@@ -188,7 +187,6 @@ html, body {
   width: 300px;
   text-align: center;
 }
-
 .modal-overlay {
   position: fixed;
   width: 100%;
