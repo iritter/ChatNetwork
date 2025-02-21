@@ -133,7 +133,7 @@
                 fetch(selectedChannel, {
                     method: "GET",
                     headers: {
-                        Authorization: "authkey ${selectedChannel.authkey}",
+                        Authorization: `authkey ${selectedChannel.authkey}`,
                     },
                 })
                     .then((response) => {
