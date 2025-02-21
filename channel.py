@@ -232,7 +232,7 @@ def save_messages(messages):
                 break  
 
     # sort from oldest to newest message
-    messages.sort(key=lambda x: x["timestamp"])  
+    messages.sort(key=lambda x: x["timestamp"], reverse=True)  
 
     # Ensure we don't exceed the max number of messages
     messages = messages[-MAX_MESSAGES:]
