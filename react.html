@@ -123,7 +123,6 @@
         }
 
         
-        
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
 
@@ -218,7 +217,7 @@
 
         function ChannelList() {
             const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState(null);
+            const [selectedChannel, setSelectedChannel] = React.useState("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi");
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
