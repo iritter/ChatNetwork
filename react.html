@@ -128,9 +128,13 @@
             const [trigger, setTrigger] = React.useState([]);
 
             React.useEffect(() => {
-                if (!selectedChannel) return;
-
-                fetch(selectedChannel, {
+                if (!selectedChannel) {
+                    setSelectedChannel({
+                        endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
+                        authkey: "Sdh-aKo34-hf"
+                    });
+                }
+                fetch(selectedChannel.endpoint, {
                     method: "GET",
                     headers: {
                         Authorization: `authkey ${selectedChannel.authkey}`,
@@ -218,7 +222,7 @@
 
         function ChannelList() {
             const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi");
+            const [selectedChannel, setSelectedChannel] = React.useState(null);
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
@@ -232,7 +236,7 @@
                         {channels.map((channel, index) => (
                             <li key={`${channel.id || channel.endpoint}-${index}`} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
                                 <button
-                                    onClick={() => setSelectedChannel(channel.endpoint)}
+                                    onClick={() => setSelectedChannel(channel)}
                                     style={{ background: "none", border: "none", color: "white", textDecoration: "none", cursor: "pointer" }}
                                 >
                                     {channel.name}
