@@ -128,12 +128,15 @@
             const [trigger, setTrigger] = React.useState([]);
 
             React.useEffect(() => {
-                if (selectedChannel == null) {
+                if (!selectedChannel) {
                     setSelectedChannel({
                         endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
                         authkey: "Sdh-aKo34-hf"
                     });
                 }
+            }, [selectedChannel]); // Depend on selectedChannel
+
+
                 fetch(selectedChannel.endpoint, {
                     method: "GET",
                     headers: {
@@ -222,7 +225,10 @@
 
         function ChannelList() {
             const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState(null);
+            const [selectedChannel, setSelectedChannel] = React.useState({
+                        endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
+                        authkey: "Sdh-aKo34-hf"
+            });
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
