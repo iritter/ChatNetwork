@@ -48,7 +48,9 @@
                 </div>;
             } else {
                 return (
-                    <NameDialog name={name} setName={setName}/>
+                    <div className = "modal-overlay">
+                        <NameDialog name={name} setName={setName}/>
+                    </div>
                 );
             }
         }
