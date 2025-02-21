@@ -134,7 +134,7 @@
         }
 
         
-        /*async function submitMessage(name, content) {
+        async function submitMessage(name, content) {
             const timestamp = new Date().toISOString();
             const newMessage = {
                 sender: name,
@@ -161,9 +161,9 @@
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
-        }*/
+        }
 
-        async function submitMessage(name, content, { selectedChannel }) {
+        /*async function submitMessage(name, content, { selectedChannel }) {
             const timestamp = new Date().toISOString();
             
             const newMessage = {
@@ -189,7 +189,7 @@
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
-        }
+        }*/
 
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
@@ -225,6 +225,15 @@
                 // Cleanup function to clear interval when component unmounts or selectedChannel changes
                 return () => clearInterval(interval);
             }, [selectedChannel]);
+
+            return (
+                <ul>
+                    {messages.map((msg, index) => (
+                        <li key={index}>{msg.text}</li>
+                    ))}
+                </ul>
+            );
+        }
 
 
             return (
@@ -357,16 +366,6 @@
                             <span className="timestamp">{dateFormat}</span>
                         </div>
                         <div className="message-content">{content}</div>
-
-                        <div className="comment-input-container">
-                                <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
-                                <button
-                                    className="submit-button"
-                                    onClick={() => add_comment()}
-                                >
-                                    Submit
-                                </button>
-                            </div>
                     </div>
                 );
             }
