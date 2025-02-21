@@ -218,7 +218,7 @@
 
         function ChannelList() {
             const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi");
+            const [selectedChannel, setSelectedChannel] = React.useState(null);
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
@@ -230,7 +230,7 @@
                 <div>
                     <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
                         {channels.map(channel => (
-                            <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
+                            <li key={channel.id || channel.endpoint} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
                                 <button
                                     onClick={() => setSelectedChannel(channel.endpoint)}
                                     style={{ background: "none", border: "none", color: "white", textDecoration: "none", cursor: "pointer" }}
@@ -240,9 +240,13 @@
                             </li>
                         ))}
                     </ul>
+
+                    {/* Nachrichtenliste wird nur angezeigt, wenn ein Channel ausgewählt wurde */}
+                    {selectedChannel && <MessageList selectedChannel={selectedChannel} />}
                 </div>
             );
         }
+
 
         ReactDOM.render(
             <div>
