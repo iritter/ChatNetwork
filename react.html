@@ -62,26 +62,38 @@
                 );
             }
         }
-
-        function WelcomeMessage() {
+        function WelcomeMessage({ selectedChannel }) {
             return (
                 <div className="WelcomeMessage">
-                    <p>Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board</p>
-                    <p>for your confessions, funny stories, and awkward moments! 😈😇</p>
-                    <div>
-                        <p>✨ <strong>How it works:</strong></p>
-                        <p>🔸 Post your confession - completely anonymous!</p>
-                        <p>🔸 Others can react with emojis 😆❤️👍</p>
-                        <p>🔸 Posts disappear after 24 hours - so enjoy the moment!</p>
-                    </div>
-
+                    {selectedChannel.name === "Confession Wall" ? (
+                        <>
+                            <p>
+                                Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board
+                            </p>
+                            <p>for your confessions, funny stories, and awkward moments! 😈😇</p>
+                            <div>
+                                <p>✨ <strong>How it works:</strong></p>
+                                <p>🔸 Post your confession - completely anonymous!</p>
+                                <p>🔸 Others can react with emojis 😆❤️👍</p>
+                                <p>🔸 Posts disappear after 24 hours - so enjoy the moment!</p>
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <p>
+                                Welcome to <strong>Anybody else's channel</strong>
+                            </p>
+                            <div>
+                                <p>🔸 Posts disappear after 24 hours - so enjoy the moment!</p>
+                            </div>
+                        </>
+                    )}
                     <p>Be honest, be funny, be bold - but stay respectful! 🫶</p>
-
                 </div>
             );
         }
 
-        function MessageInput() {
+        function MessageInput({ selectedChannel }) {
             const [name, setName] = React.useState("");
             const [content, setContent] = React.useState("");
 
@@ -92,19 +104,65 @@
                 }
 
                 submitMessage(name, content);
-            }
+                setName(""); // Clear input after submission
+                setContent("");
+            };
 
             return (
-                <div className="MessageBox">
-                    <h3>Make a confession 😈 😇</h3>
-                    <input type="text" placeholder="Your name or alias" value={name} onChange={(e) => setName(e.target.value)} />
-                    <input type="text" placeholder="Write your confession or funny moment..." value={content} onChange={(e) => setContent(e.target.value)} />
-                    <button className="new-message-button" onClick={onSubmit}>Submit to Whisper Wall</button>
-                </div>
+                selectedChannel.name === "Confession Wall" && (
+                    <div className="MessageBox">
+                        <h3>Make a confession 😈 😇</h3>
+                        <input
+                            type="text"
+                            placeholder="Your name or alias"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                        />
+                        <input
+                            type="text"
+                            placeholder="Write your confession or funny moment..."
+                            value={content}
+                            onChange={(e) => setContent(e.target.value)}
+                        />
+                        <button className="new-message-button" onClick={onSubmit}>
+                            Submit to Whisper Wall
+                        </button>
+                    </div>
+                )
             );
         }
+
         
-        async function submitMessage(name, content, { selectedChannel }) {
+        async function submitMessage(name, content) {
+            const timestamp = new Date().toISOString();
+            const newMessage = {
+                sender: name,
+                content: content,
+                timestamp: timestamp
+            };
+
+            console.log(JSON.stringify(newMessage));
+
+            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                method: "POST",
+                headers: {
+                    'Authorization': 'authkey Sdh-aKo34-hf',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newMessage),
+            });
+
+            if (response.ok) {
+                //const responseData = await response.json();
+                console.log("Success juhu");
+
+            } else {
+                const errorText = await response.text();
+                console.error("Error:", response.status, errorText);
+            }
+        }
+
+        /*async function submitMessage(name, content, { selectedChannel }) {
             const timestamp = new Date().toISOString();
             
             const newMessage = {
@@ -130,7 +188,7 @@
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
-        }
+        }*/
 
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
@@ -262,7 +320,6 @@
                 </div>
             );
         }
-        
         function App() {
             const [selectedChannel, setSelectedChannel] = React.useState({
                 name: "Confession Wall",
