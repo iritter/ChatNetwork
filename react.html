@@ -190,7 +190,7 @@
             const checkExtra = Array.isArray(extra) ? extra : [0, "", []]; // standard empty
             const comments = Array.isArray(checkExtra[2]) ? checkExtra[2] : [];
 
-            async function saveReaction(timestamp) {
+            async function saveReaction() {
                 const newMessage = {
                     sender: "unknown",
                     content: "increment-reaction",
@@ -227,7 +227,7 @@
                         </div>
                         <div className="message-content">{content}</div>
                         <div className="reaction-buttons">
-                            <button onClick={() => saveReaction(0)}>👍 ❤️ 😂 {extra[0]}</button>
+                            <button onClick={() => saveReaction()}>👍 ❤️ 😂 {extra[0]}</button>
                         </div>
 
                         <div className="comments-section">
