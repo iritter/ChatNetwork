@@ -357,6 +357,16 @@
                             <span className="timestamp">{dateFormat}</span>
                         </div>
                         <div className="message-content">{content}</div>
+
+                        <div className="comment-input-container">
+                                <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
+                                <button
+                                    className="submit-button"
+                                    onClick={() => add_comment()}
+                                >
+                                    Submit
+                                </button>
+                            </div>
                     </div>
                 );
             }
