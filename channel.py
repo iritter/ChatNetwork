@@ -203,10 +203,14 @@ def save_messages(messages):
     global CHANNEL_FILE
     
     increment_messages = []
+    add_comment = []
 
     for msg in messages[:]:
-        if msg.get("content") == "increment-reaction":
+        if msg.get("sender") == "increment-reaction":
             increment_messages.append(msg)
+            messages.remove(msg)
+        if msg.get("sender") == "add-comment":
+            add_comment.append(msg)
             messages.remove(msg)
 
     while increment_messages:
@@ -216,6 +220,15 @@ def save_messages(messages):
         for msg in messages:
             if msg.get("timestamp") == reaction_timestamp:
                 msg["extra"][0] += 1
+                break  
+
+    while add_comment:
+        comment_msg = add_comment.pop(0)  
+        comment_timestamp = comment_msg.get("timestamp")
+        
+        for msg in messages:
+            if msg.get("timestamp") == comment_timestamp:
+                msg["extra"][2].append(comment_msg.get("content"))
                 break  
 
     # sort from oldest to newest message

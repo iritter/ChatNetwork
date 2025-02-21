@@ -179,6 +179,8 @@
 
 
         function MessageBox({ sender, content, timestamp, extra }) {
+            const [comment, setComment] = React.useState("");
+
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
                 year: '2-digit',
                 month: '2-digit',
@@ -192,8 +194,34 @@
 
             async function saveReaction() {
                 const newMessage = {
-                    sender: "unknown",
-                    content: "increment-reaction",
+                    sender: "increment-reaction",
+                    content: "unknown",
+                    timestamp: timestamp
+                };
+
+                console.log(JSON.stringify(newMessage));
+
+                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                    method: "POST",
+                    headers: {
+                        'Authorization': 'authkey Sdh-aKo34-hf',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMessage),
+                });
+
+                if (response.ok) {
+                    console.log("success reaction saved");
+
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", response.status, errorText);
+                }
+            }
+            async function saveReaction({comment_content}) {
+                const newMessage = {
+                    sender: "add_comment",
+                    content: "",
                     timestamp: timestamp
                 };
 
@@ -239,17 +267,15 @@
                                 </div>
                             ))}
                             <div className="comment-input-container">
-                                <input className="comment-input" type="text" placeholder="Write a comment" />
+                                <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
                                 <button
                                     className="submit-button"
-                                    onClick={() => handleCommentSubmit()}
+                                    onClick={() => add_comment(comment_content)}
                                 >
                                     Submit
                                 </button>
                             </div>
-
                         </div>
-
                     </div>
                 );
             } else {
