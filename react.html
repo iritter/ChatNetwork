@@ -122,46 +122,11 @@
             }
         }
 
-
-        
-        function ChannelList() {
-            const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState(null);
-
-            React.useEffect(() => {
-                fetch("http://vm146.rz.uos.de/hub/channels")
-                    .then(response => response.json())
-                    .then(data => setChannels(data.channels));
-            }, []);
-
-            return (
-                <div>
-                    <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
-                        {channels.map(channel => (
-                            <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
-                                <button
-                                    onClick={() => setSelectedChannel(channel.endpoint)}
-                                    style={{ background: "none", border: "none", color: "white", textDecoration: "none", cursor: "pointer" }}
-                                >
-                                    {channel.name}
-                                </button>
-                            </li>
-                        ))}
-                    </ul>
-
-                    {/* Nachrichtenliste wird nur angezeigt, wenn ein Channel ausgewählt wurde */}
-                    {selectedChannel && <MessageList selectedChannel={selectedChannel} />}
-                </div>
-            );
-        }
-
-        function MessageList({ selectedChannel }) {
+        function MessageList() {
             const [messages, setMessages] = React.useState([]);
 
             React.useEffect(() => {
-                if (!selectedChannel) return;
-
-                fetch(selectedChannel, {
+                fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
                     method: "GET",
                     headers: {
                         Authorization: "authkey Sdh-aKo34-hf",
@@ -178,7 +143,7 @@
                     })
                     .catch((error) => console.error("Error fetching messages:", error));
 
-            }, [selectedChannel]);
+                }, []);
 
             return (
                 <div>
@@ -198,6 +163,7 @@
                 </div>
             );
         }
+
 
 
         function MessageBox({ sender, content, timestamp, extra }) {
@@ -248,7 +214,35 @@
         }
 
 
-        
+        function ChannelList() {
+            const [channels, setChannels] = React.useState([]);
+
+            React.useEffect(() => {
+                fetch("http://vm146.rz.uos.de/hub/channels")
+                    .then(response => response.json())
+                    .then(data => setChannels(data.channels));
+            }, []);
+
+            return (
+                <div>
+                    <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
+                        {channels.map(channel => {
+                            // Construct the correct URL
+                            const channelUrl = `http://vm146.rz.uni-osnabrueck.de/client/show?channel=${encodeURIComponent(channel.endpoint)}`;
+
+                            return (
+                                <li key={channel.id} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
+                                    <a href={channelUrl} target="_blank" rel="noopener noreferrer" style={{ color: "white", textDecoration: "none" }}>
+                                        {channel.name}
+                                    </a>
+                                </li>
+                            );
+                        })}
+                    </ul>
+                </div>
+            );
+        }
+
 
         ReactDOM.render(
             <div>
