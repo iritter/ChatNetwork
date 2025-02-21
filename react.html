@@ -134,7 +134,7 @@
         }
 
         
-        async function submitMessage(name, content) {
+        /*async function submitMessage(name, content) {
             const timestamp = new Date().toISOString();
             const newMessage = {
                 sender: name,
@@ -161,9 +161,9 @@
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
-        }
+        }*/
 
-        /*async function submitMessage(name, content, { selectedChannel }) {
+        async function submitMessage(name, content, { selectedChannel }) {
             const timestamp = new Date().toISOString();
             
             const newMessage = {
@@ -189,7 +189,7 @@
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
-        }*/
+        }
 
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
@@ -225,8 +225,6 @@
                 // Cleanup function to clear interval when component unmounts or selectedChannel changes
                 return () => clearInterval(interval);
             }, [selectedChannel]);
-
-
 
 
             return (
