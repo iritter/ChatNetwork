@@ -110,28 +110,37 @@
             };
 
             return (
-                selectedChannel.name === "Confession Wall" && (
-                    <div className="MessageBox">
-                        <h3>Make a confession 😈 😇</h3>
-                        <input
-                            type="text"
-                            placeholder="Your name or alias"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
-                        />
-                        <input
-                            type="text"
-                            placeholder="Write your confession or funny moment..."
-                            value={content}
-                            onChange={(e) => setContent(e.target.value)}
-                        />
-                        <button className="new-message-button" onClick={onSubmit}>
-                            Submit to Whisper Wall
-                        </button>
-                    </div>
-                )
+                <div className="MessageBox">
+                    <h3>
+                        {selectedChannel?.name === "Confession Wall"
+                            ? "Make a confession 😈 😇"
+                            : "Write a comment 😇"}
+                    </h3>
+                    <input
+                        type="text"
+                        placeholder="Your name or alias"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+                    <input
+                        type="text"
+                        placeholder={
+                            selectedChannel?.name === "Confession Wall"
+                                ? "Write your confession or funny moment..."
+                                : "Please insert text."
+                        }
+                        value={content}
+                        onChange={(e) => setContent(e.target.value)}
+                    />
+                    <button className="new-message-button" onClick={onSubmit}>
+                        {selectedChannel?.name === "Confession Wall"
+                            ? "Submit to Whisper Wall"
+                            : "Submit"}
+                    </button>
+                </div>
             );
         }
+
 
         
         async function submitMessage(name, content) {
@@ -190,7 +199,7 @@
                 console.error("Error:", response.status, errorText);
             }
         }*/
-       
+
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
 
@@ -356,6 +365,8 @@
                             <span className="timestamp">{dateFormat}</span>
                         </div>
                         <div className="message-content">{content}</div>
+
+
                     </div>
                 );
             }
