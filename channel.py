@@ -105,6 +105,7 @@ def send_message():
     if not 'timestamp' in message:
         return "No timestamp", 400
     
+
     # fix timestamp 
     timestamp_formatted = datetime.fromisoformat(message['timestamp'].rstrip("Z"))
     message['timestamp'] = timestamp_formatted.isoformat()  
@@ -202,6 +203,8 @@ def save_messages(messages):
     global CHANNEL_FILE
     # sort from oldest to newest message
     messages.sort(key=lambda x: x["timestamp"])  
+
+    if 
     # Ensure we don't exceed the max number of messages
     messages = messages[-MAX_MESSAGES:]
     

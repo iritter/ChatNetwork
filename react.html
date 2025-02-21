@@ -190,51 +190,80 @@
             const checkExtra = Array.isArray(extra) ? extra : [0, "", []]; // standard empty
             const comments = Array.isArray(checkExtra[2]) ? checkExtra[2] : [];
 
-            if (extra !== null) {
-                return (
-                    <div className="MessageBox">
-                        <div className="message-header">
-                            <span className="sender">{sender}</span>
-                            <span className="timestamp">{dateFormat}</span>
-                        </div>
-                        <div className="message-content">{content}</div>
-                        <div className="reaction-buttons">
-                            <button onClick={() => saveReaction(0)}>👍 ❤️ 😂 {extra[0]}</button>
-                        </div>
+            async function saveReaction(timestamp) {
+                const newMessage = {
+                    sender: "unknown",
+                    content: "increment-reaction",
+                    timestamp: timestamp
+                };
 
-                        <div className="comments-section">
-                            <div className="comment">{extra[1]}</div>
+                console.log(JSON.stringify(newMessage));
 
-                            {comments.map((comment, index) => (
-                                <div key={index} className="comment">
-                                    {comment}
-                                </div>
-                            ))}
-                            <div className="comment-input-container">
-                                <input className="comment-input" type="text" placeholder="Write a comment" />
-                                <button
-                                    className="submit-button"
-                                    onClick={() => handleCommentSubmit()}
-                                >
-                                    Submit
-                                </button>
-                            </div>
+                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                    method: "POST",
+                    headers: {
+                        'Authorization': 'authkey Sdh-aKo34-hf',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMessage),
+                });
 
-                        </div>
+                if (response.ok) {
+                    console.log("success reaction saved");
 
-                    </div>
-                );
-            } else {
-                return (
-                    <div className="MessageBox">
-                        <div className="message-header">
-                            <span className="sender">{sender}</span>
-                            <span className="timestamp">{dateFormat}</span>
-                        </div>
-                        <div className="message-content">{content}</div>
-                    </div>
-                );
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", response.status, errorText);
+                }
             }
+
+        }
+
+        if (extra !== null) {
+            return (
+                <div className="MessageBox">
+                    <div className="message-header">
+                        <span className="sender">{sender}</span>
+                        <span className="timestamp">{dateFormat}</span>
+                    </div>
+                    <div className="message-content">{content}</div>
+                    <div className="reaction-buttons">
+                        <button onClick={() => saveReaction(0)}>👍 ❤️ 😂 {extra[0]}</button>
+                    </div>
+
+                    <div className="comments-section">
+                        <div className="comment">{extra[1]}</div>
+
+                        {comments.map((comment, index) => (
+                            <div key={index} className="comment">
+                                {comment}
+                            </div>
+                        ))}
+                        <div className="comment-input-container">
+                            <input className="comment-input" type="text" placeholder="Write a comment" />
+                            <button
+                                className="submit-button"
+                                onClick={() => handleCommentSubmit()}
+                            >
+                                Submit
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+            );
+        } else {
+            return (
+                <div className="MessageBox">
+                    <div className="message-header">
+                        <span className="sender">{sender}</span>
+                        <span className="timestamp">{dateFormat}</span>
+                    </div>
+                    <div className="message-content">{content}</div>
+                </div>
+            );
+        }
         }
 
         function ChannelList({ selectedChannel, setSelectedChannel }) {
@@ -272,14 +301,14 @@
 
             return (
                 <div>
-                    <Header selectedChannelName={selectedChannel.name}/>
+                    <Header selectedChannelName={selectedChannel.name} />
                     <div className="container">
                         <div className="left-column">
                             <section>
                                 <Container />
                             </section>
                             <h2>Your Channels</h2>
-                            <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
+                            <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel} />
                         </div>
 
                         <div className="right-column">
