@@ -128,7 +128,7 @@
             const [trigger, setTrigger] = React.useState([]);
 
             React.useEffect(() => {
-                if (!selectedChannel) {
+                if (selectedChannel == null) {
                     setSelectedChannel({
                         endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
                         authkey: "Sdh-aKo34-hf"
