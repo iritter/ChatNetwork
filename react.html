@@ -227,16 +227,6 @@
             }, [selectedChannel]);
 
             return (
-                <ul>
-                    {messages.map((msg, index) => (
-                        <li key={index}>{msg.text}</li>
-                    ))}
-                </ul>
-            );
-        }
-
-
-            return (
                 <div>
                     {messages.length > 0 ? (
                         messages.map((message, index) => (
