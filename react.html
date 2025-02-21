@@ -238,6 +238,8 @@
 
 
         function MessageBox({ sender, content, timestamp, extra }) {
+            const [comment, setComment] = React.useState("");
+
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
                 year: '2-digit',
                 month: '2-digit',
@@ -249,6 +251,60 @@
             const checkExtra = Array.isArray(extra) ? extra : [0, "", []]; // standard empty
             const comments = Array.isArray(checkExtra[2]) ? checkExtra[2] : [];
 
+            async function saveReaction() {
+                const newMessage = {
+                    sender: "increment-reaction",
+                    content: "unknown",
+                    timestamp: timestamp
+                };
+
+                console.log(JSON.stringify(newMessage));
+
+                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                    method: "POST",
+                    headers: {
+                        'Authorization': 'authkey Sdh-aKo34-hf',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMessage),
+                });
+
+                if (response.ok) {
+                    console.log("success reaction saved");
+
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", response.status, errorText);
+                }
+            }
+            async function add_comment() {
+                const newMessage = {
+                    sender: "add-comment",
+                    content: comment,
+                    timestamp: timestamp
+                };
+
+                console.log(JSON.stringify(newMessage));
+
+                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+                    method: "POST",
+                    headers: {
+                        'Authorization': 'authkey Sdh-aKo34-hf',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(newMessage),
+                });
+
+                if (response.ok) {
+                    console.log("success reaction saved");
+
+                } else {
+                    const errorText = await response.text();
+                    console.error("Error:", response.status, errorText);
+                }
+            }
+
+
             if (extra !== null) {
                 return (
                     <div className="MessageBox">
@@ -258,7 +314,7 @@
                         </div>
                         <div className="message-content">{content}</div>
                         <div className="reaction-buttons">
-                            <button onClick={() => saveReaction(0)}>👍 ❤️ 😂 {extra[0]}</button>
+                            <button onClick={() => saveReaction()}>👍 ❤️ 😂 {extra[0]}</button>
                         </div>
 
                         <div className="comments-section">
@@ -270,17 +326,15 @@
                                 </div>
                             ))}
                             <div className="comment-input-container">
-                                <input className="comment-input" type="text" placeholder="Write a comment" />
+                                <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
                                 <button
                                     className="submit-button"
-                                    onClick={() => handleCommentSubmit()}
+                                    onClick={() => add_comment()}
                                 >
                                     Submit
                                 </button>
                             </div>
-
                         </div>
-
                     </div>
                 );
             } else {
@@ -331,19 +385,19 @@
 
             return (
                 <div>
-                    <Header selectedChannelName={selectedChannel.name}/>
+                    <Header selectedChannelName={selectedChannel.name} />
                     <div className="container">
                         <div className="left-column">
                             <section>
                                 <Container />
                             </section>
                             <h2>Your Channels</h2>
-                            <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
+                            <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel} />
                         </div>
 
                         <div className="right-column">
-                            <WelcomeMessage selectedChannel={selectedChannel} />
-                            <MessageInput selectedChannel={selectedChannel} />
+                            <WelcomeMessage selectedChannel={selectedChannel}/>
+                            <MessageInput selectedChannel={selectedChannel}/>
                             <MessageList selectedChannel={selectedChannel} />
                         </div>
                     </div>
