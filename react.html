@@ -6,7 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="styles.css">
     <title>Simple React App</title>
-<script type="text/javascript" charset="UTF-8"></script></head>
+    <script type="text/javascript" charset="UTF-8"></script>
+</head>
 
 <body>
     <div id="root"></div>
@@ -23,33 +24,33 @@
             );
         }
 
-        function NameDialog({name, setName}) {
+        function NameDialog({ name, setName }) {
             return <dialog open className="modal">
-                      <article>
-                        <header>
-                          <p>
-                            <strong>What's your name?</strong>
-                          </p>
-                        </header>
+                <article>
+                    <header>
                         <p>
-                          <input type="text"
-                                     onKeyDown={({key, target}) => key === 'Enter' && setName(target.value)}/>
+                            <strong>What's your name?</strong>
                         </p>
-                      </article>
-                    </dialog>
+                    </header>
+                    <p>
+                        <input type="text"
+                            onKeyDown={({ key, target }) => key === 'Enter' && setName(target.value)} />
+                    </p>
+                </article>
+            </dialog>
         }
 
         function Container() {
             const [name, setName] = React.useState("");
 
             if (name) {
-                return <div><h1 style={{ color: "purple"}}>Hello, {name}!</h1>
+                return <div><h1 style={{ color: "purple" }}>Hello, {name}!</h1>
                     <button onClick={() => setName("")}>Logout</button>
                 </div>;
             } else {
                 return (
                     <div className="modal-overlay">
-                        <NameDialog name={name} setName={setName}/>
+                        <NameDialog name={name} setName={setName} />
                     </div>
                 );
             }
@@ -98,8 +99,8 @@
         async function submitMessage(name, content) {
             const timestamp = new Date().toISOString();
             const newMessage = {
-                sender: name, 
-                content: content, 
+                sender: name,
+                content: content,
                 timestamp: timestamp
             };
 
@@ -107,9 +108,9 @@
 
             const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
                 method: "POST",
-                headers: { 
-                    'Authorization': 'authkey Sdh-aKo34-hf', 
-                    'Content-Type': 'application/json'  
+                headers: {
+                    'Authorization': 'authkey Sdh-aKo34-hf',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(newMessage),
             });
@@ -117,20 +118,20 @@
             if (response.ok) {
                 //const responseData = await response.json();
                 console.log("Success juhu");
-                
+
             } else {
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
         }
 
-        
+
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
 
             React.useEffect(() => {
                 if (!selectedChannel) return;
-                
+
                 fetch(selectedChannel.endpoint, {
                     method: "GET",
                     headers: {
@@ -229,12 +230,8 @@
             }
         }
 
-        function ChannelList() {
+        function ChannelList({ selectedChannel, setSelectedChannel }) {
             const [channels, setChannels] = React.useState([]);
-            const [selectedChannel, setSelectedChannel] = React.useState({
-                        endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
-                        authkey: "Sdh-aKo34-hf"
-            });
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
@@ -256,34 +253,42 @@
                             </li>
                         ))}
                     </ul>
-
-                    {/* Nachrichtenliste wird nur angezeigt, wenn ein Channel ausgewählt wurde */}
-                    {selectedChannel && <MessageList selectedChannel={selectedChannel} />}
                 </div>
             );
+        }
+        function App() {
+            const [selectedChannel, setSelectedChannel] = React.useState({
+                endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
+                authkey: "Sdh-aKo34-hf"
+            });
+
+            return (
+                <div>
+                    <Header />
+                    <div className="container">
+                        <div className="left-column">
+                            <section>
+                                <Container />
+                            </section>
+                            <h2>Your Channels</h2>
+                            <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel}/>
+                        </div>
+
+                        <div className="right-column">
+                            <WelcomeMessage />
+                            <MessageInput />
+                            <MessageList selectedChannel={selectedChannel} />
+                        </div>
+                    </div>
+                    <footer>AI and the Web 2025</footer>
+                </div>
+            )
+
         }
 
 
         ReactDOM.render(
-            <div>
-                <Header />
-                <div className="container">
-                    <div className="left-column">
-                        <section>
-                            <Container />
-                        </section>
-                        <h2>Your Channels</h2>
-                        <ChannelList /> {/* Insert ChannelList here */}
-                    </div>
-
-                    <div className="right-column">
-                        <WelcomeMessage />
-                        <MessageInput />
-                        <MessageList />
-                    </div>
-                </div>
-                <footer>AI and the Web 2025</footer>
-            </div>,
+            <App />,
             document.getElementById('root')
         );
 
