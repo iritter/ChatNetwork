@@ -65,7 +65,7 @@
         function WelcomeMessage({ selectedChannel }) {
             return (
                 <div className="WelcomeMessage">
-                    {selectedChannel.name === "Confession Wall" ? (
+                    {{selectedChannel.name} == "Confession Wall" ? (
                         <React.Fragment>
                             <p>
                                 Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board
@@ -341,8 +341,8 @@
                         </div>
 
                         <div className="right-column">
-                            <WelcomeMessage />
-                            <MessageInput />
+                            <WelcomeMessage selectedChannel={selectedChannel} />
+                            <MessageInput selectedChannel={selectedChannel} />
                             <MessageList selectedChannel={selectedChannel} />
                         </div>
                     </div>
