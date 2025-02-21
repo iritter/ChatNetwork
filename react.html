@@ -104,8 +104,9 @@
             );
         }
         
-        async function submitMessage(name, content) {
+        async function submitMessage(name, content, { selectedChannel }) {
             const timestamp = new Date().toISOString();
+            
             const newMessage = {
                 sender: name,
                 content: content,
@@ -114,11 +115,10 @@
 
             console.log(JSON.stringify(newMessage));
 
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+            const response = await fetch(selectedChannel.endpoint, {
                 method: "POST",
                 headers: {
-                    'Authorization': 'authkey Sdh-aKo34-hf',
-                    'Content-Type': 'application/json'
+                    Authorization: `authkey ${selectedChannel.authkey}`,
                 },
                 body: JSON.stringify(newMessage),
             });
@@ -126,13 +126,11 @@
             if (response.ok) {
                 //const responseData = await response.json();
                 console.log("Success juhu");
-
             } else {
                 const errorText = await response.text();
                 console.error("Error:", response.status, errorText);
             }
         }
-
 
         function MessageList({ selectedChannel }) {
             const [messages, setMessages] = React.useState([]);
@@ -264,6 +262,7 @@
                 </div>
             );
         }
+        
         function App() {
             const [selectedChannel, setSelectedChannel] = React.useState({
                 name: "Confession Wall",
