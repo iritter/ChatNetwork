@@ -218,10 +218,10 @@
                     console.error("Error:", response.status, errorText);
                 }
             }
-            async function saveReaction({comment_content}) {
+            async function add_comment() {
                 const newMessage = {
                     sender: "add_comment",
-                    content: "",
+                    content: comment,
                     timestamp: timestamp
                 };
 
@@ -270,7 +270,7 @@
                                 <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
                                 <button
                                     className="submit-button"
-                                    onClick={() => add_comment(comment_content)}
+                                    onClick={() => add_comment()}
                                 >
                                     Submit
                                 </button>
