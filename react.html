@@ -66,7 +66,7 @@
             return (
                 <div className="WelcomeMessage">
                     {selectedChannel.name === "Confession Wall" ? (
-                        <>
+                        <React.Fragment>
                             <p>
                                 Welcome to <strong>Whisper Wall</strong> - the anonymous bulletin board
                             </p>
@@ -77,21 +77,22 @@
                                 <p>🔸 Others can react with emojis 😆❤️👍</p>
                                 <p>🔸 Posts disappear after 24 hours - so enjoy the moment!</p>
                             </div>
-                        </>
+                        </React.Fragment>
                     ) : (
-                        <>
+                        <React.Fragment>
                             <p>
                                 Welcome to <strong>Anybody else's channel</strong>
                             </p>
                             <div>
                                 <p>🔸 Posts disappear after 24 hours - so enjoy the moment!</p>
                             </div>
-                        </>
+                        </React.Fragment>
                     )}
                     <p>Be honest, be funny, be bold - but stay respectful! 🫶</p>
                 </div>
             );
         }
+
 
         function MessageInput({ selectedChannel }) {
             const [name, setName] = React.useState("");
