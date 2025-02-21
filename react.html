@@ -18,10 +18,17 @@
 
     <script type="text/babel">
 
-        function Header() {
-            return (
-                <h1 className="Header">😈 Confession Wall 😇</h1>
-            );
+        function Header({ selectedChannelName }) {
+            if (selectedChannelName == "Confession Wall") {
+                return (
+                    <h1 className="Header">😈 Confession Wall 😇</h1>
+                );
+            } else {
+                return (
+                    <h1 className="Header">{selectedChannelName}</h1>
+                );
+            }
+
         }
 
         function NameDialog({ name, setName }) {
@@ -264,7 +271,7 @@
 
             return (
                 <div>
-                    <Header />
+                    <Header selectedChannel={selectedChannel}/>
                     <div className="container">
                         <div className="left-column">
                             <section>
