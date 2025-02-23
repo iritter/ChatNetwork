@@ -22,8 +22,8 @@ This project aims to create a **distributed chat network**. Our channel provides
 ---
 
 ## 🔑 Key Features
-✅ **Anonymous Confessions** – Post messages without revealing your identity.
-✅ **React & Comment** – Engage with confessions by leaving comments and reactions.
+- ✅ **Anonymous Confessions** – Post messages without revealing your identity.
+- ✅ **React & Comment** – Engage with confessions by leaving comments and reactions.
 ✅ **Auto-Expiring Messages** – Confessions disappear after **24 hours** to keep the wall fresh.
 ✅ **Message Limitation** – Only the latest **15 confessions** are stored.
 ✅ **Content Moderation** – A filter removes inappropriate words to maintain a respectful environment.
