@@ -1,42 +1,128 @@
-# Start Code for Task 3
+```markdown
+# Confession Wall Project
 
-AI & the Web, winter term 2024/2025
+Welcome to the **Confession Wall Project**! 🚀
 
-## Running the code on your development server
+This project aims to create a **distributed chat network**. Our channel provides a unique and anonymous **confession wall**, where users can post confessions, react to others, and engage in discussions while ensuring a safe and moderated environment.
 
-1. Create and activate a virtual environment, install everything from requirements.txt
+---
 
-2. Run hub
+## 📑 Table of Contents
+1. 🔑 Key Features
+2. ⚙️ How It Works
+   - Home Route
+   - Confession Submission & Interaction
+   - Message Filtering
+   - Message Expiry & Limitations
+3. 🛠️ Tech Stack
+4. 🚀 Getting Started
+5. 📂 Project Structure
+6. 🌟 Enjoy the Confession Wall!
+7. 📝 Attribution
 
-    > python hub.py
+---
 
-3. Run the channel server (different shell)
+## 🔑 Key Features
+✅ **Anonymous Confessions** – Post messages without revealing your identity.
+✅ **React & Comment** – Engage with confessions by leaving comments and reactions.
+✅ **Auto-Expiring Messages** – Confessions disappear after **24 hours** to keep the wall fresh.
+✅ **Message Limitation** – Only the latest **15 confessions** are stored.
+✅ **Content Moderation** – A filter removes inappropriate words to maintain a respectful environment.
+✅ **Active Channel** – Auto-generated responses for specific message patterns.
+✅ **Channel List** – Browse other chat channels from the distributed hub.
 
-    > python channel.py
+---
 
-4. Register the channel server with the hub (another different shell)
+## ⚙️ How It Works
 
-    > flask --app channel.py register
-    
-5. Now open the client from step 3 (URL is displayed in the terminal)
+### 1️⃣ Home Route
+When you visit our channel, you will see:
+- A **welcome message** introducing the purpose of the confession wall.
+- A **list of the most recent confessions** (newest at the top, oldest at the bottom).
+- A **channel list** on the left to explore other public chat channels.
 
+### 2️⃣ Confession Submission & Interaction
+Users can submit confessions anonymously. Others can:
+- **Like/react** to a confession.
+- **Comment** on a confession (using the `extra` field to attach comments).
 
-## Creating your own client
+### 3️⃣ Message Filtering
+To ensure a respectful and meaningful discussion:
+- A **profanity filter** removes inappropriate words before posting.
+- Off-topic or spam messages are **not displayed**.
+- Automatic **keyword-based responses**:
+  - **Short messages** → "That was kurz und knapp..."
+  - **Long messages** → "Wow, thanks for the long submission!"
+  - **Emotional messages** (e.g., "lonely") → "You are not alone… thanks for being part of the community."
 
-1. Set variables in the client code
-2. Modify the code
+### 4️⃣ Message Expiry & Limitations
+- **Messages disappear after 24 hours** to keep discussions fresh.
+- **Only the latest 15 messages** are displayed, ensuring a clean and relevant feed.
 
-# Deploying on the server
+---
 
-Follow the same steps as for task 2.
+## 🛠️ Tech Stack
+- **Python**: Backend logic and message handling
+- **Flask**: Web server framework
+- **React (JavaScript)**: Frontend UI for chat interaction
+- **WebSockets**: Real-time messaging functionality
+- **Profanity Filter**: Ensures appropriate language use
+- **University Distributed Hub**: Connects to other chat channels
 
-Don't forget to adjust the variables in the client code. 
+---
 
-You don't need to run the hub but use the public hub:
+## 🚀 Getting Started
+### 1️⃣ Clone the Repository:
+```bash
+ git clone https://github.com/your-repo/ConfessionWall.git
+ cd ConfessionWall
+```
+### 2️⃣ Install Dependencies:
+```bash
+ pip install -r requirements.txt
+```
+### 3️⃣ Run the Channel Server:
+```bash
+ python channel.py
+```
+### 4️⃣ Deploy & Register:
+- Deploy the server to a university server.
+- Register it with the **public hub** at:
+  - **Hub endpoint**: `http://vm146.rz.uni-osnabrueck.de/hub`
+  - **Auth key**: `'Crr-K24d-2N'`
 
-http://vm146.rz.uni-osnabrueck.de/hub
-SERVER_AUTHKEY = 'Crr-K24d-2N'
+---
 
-You don't need to start your channel explicitly because the Apache server will do that for you.
+## 📂 Project Structure
+```
+ConfessionWall/
+|   .gitignore
+|   channel.py
+|   README.md
+|   requirements.txt
+|
++---static
+|   \---css
+|           styles.css
+|
++---templates
+|       base.html
+|       home.html
+|       confession.html
+|       not-found.html
+|
++---client
+|       react-app (React client for messaging UI)
+```
 
-But don't forget to register your channel server with the hub (see above).
+---
+
+## 🌟 Enjoy the Confession Wall!
+We hope you enjoy using our **anonymous confession wall**! 💬💖
+Share your thoughts, interact with others, and be part of this safe and engaging community!
+
+---
+
+## 📝 Attribution
+Created with ❤️ by Group 11: Johanna, Christina & Isabel. 
+```
