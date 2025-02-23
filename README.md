@@ -24,11 +24,11 @@ This project aims to create a **distributed chat network**. Our channel provides
 ## 🔑 Key Features
 - ✅ **Anonymous Confessions** – Post messages without revealing your identity.
 - ✅ **React & Comment** – Engage with confessions by leaving comments and reactions.
-✅ **Auto-Expiring Messages** – Confessions disappear after **24 hours** to keep the wall fresh.
-✅ **Message Limitation** – Only the latest **15 confessions** are stored.
-✅ **Content Moderation** – A filter removes inappropriate words to maintain a respectful environment.
-✅ **Active Channel** – Auto-generated responses for specific message patterns.
-✅ **Channel List** – Browse other chat channels from the distributed hub.
+- ✅ **Auto-Expiring Messages** – Confessions disappear after **24 hours** to keep the wall fresh.
+- ✅ **Message Limitation** – Only the latest **15 confessions** are stored.
+- ✅ **Content Moderation** – A filter removes inappropriate words to maintain a respectful environment.
+- ✅ **Active Channel** – Auto-generated responses for specific message patterns.
+- ✅ **Channel List** – Browse other chat channels from the distributed hub.
 
 ---
 
@@ -73,8 +73,7 @@ To ensure a respectful and meaningful discussion:
 ## 🚀 Getting Started
 ### 1️⃣ Clone the Repository:
 ```bash
- git clone https://github.com/your-repo/ConfessionWall.git
- cd ConfessionWall
+ git clone https://github.com/iritter/ChatNetwork.git
 ```
 ### 2️⃣ Install Dependencies:
 ```bash
@@ -94,24 +93,24 @@ To ensure a respectful and meaningful discussion:
 
 ## 📂 Project Structure
 ```
-ConfessionWall/
+ChatNetwork/
 |   .gitignore
-|   channel.py
 |   README.md
 |   requirements.txt
+|   channel.py
+|   hub.py
+|   react.html
+|   messages.json
+|   channel.wsgi
+|   hub.wsgi
 |
 +---static
 |   \---css
 |           styles.css
 |
 +---templates
-|       base.html
+|       channel.html
 |       home.html
-|       confession.html
-|       not-found.html
-|
-+---client
-|       react-app (React client for messaging UI)
 ```
 
 ---
