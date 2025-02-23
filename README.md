@@ -1,4 +1,3 @@
-```markdown
 # Confession Wall Project
 
 Welcome to the **Confession Wall Project**! 🚀
@@ -125,4 +124,3 @@ Share your thoughts, interact with others, and be part of this safe and engaging
 
 ## 📝 Attribution
 Created with ❤️ by Group 11: Johanna, Christina & Isabel. 
-```
