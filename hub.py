@@ -3,7 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 import datetime
 import requests
+import os
 
+# Initialize SQLAlchemy to handle database operations.
 db = SQLAlchemy()
 
 # Define the User data-model.
@@ -22,8 +24,9 @@ class Channel(db.Model):
 class ConfigClass(object):
     """ Flask application config """
 
-    # Flask settings
-    SECRET_KEY = 'This is an INSECURE secret!! DO NOT use this in production!!'
+    # SECRET_KEY is used to sign session cookies and other security-related data.
+    # In production, this should be a strong, random value stored securely.
+    SECRET_KEY = os.environ.get("FLASK_SECRET_KEY", "default_insecure_key_for_dev_only")
 
     # Flask-SQLAlchemy settings
     SQLALCHEMY_DATABASE_URI = 'sqlite:///chat_server.sqlite'  # File-based SQL database
@@ -41,23 +44,31 @@ SERVER_AUTHKEY = 'Crr-K24d-2N'
 # The Home page is accessible to anyone
 @app.route('/')
 def home_page():
-    # render home.html template
+    """
+    Home page route for the hub.
+    Renders the home.html template and passes the list of registered channels.
+    """
     channels = Channel.query.all()
     return render_template("home.html")
 
 
 def health_check(endpoint, authkey):
-    # make GET request to URL
-    # add authkey to request header
+    """
+    Checks the health of a channel by sending a GET request to its /health endpoint.
+    
+    The function:
+      - Sends a GET request with the proper authorization header.
+      - Verifies that the response status is 200 and the response JSON contains a "name" key.
+      - Confirms that the channel's name in the response matches the one stored in the database.
+      - If all checks pass, updates the channel's last_heartbeat and returns True.
+      - Otherwise, returns False.
+    """
     response = requests.get(endpoint+'/health',
                             headers={'Authorization': 'authkey '+authkey})
     if response.status_code != 200:
         return False
-    # check if response is JSON with {"name": <channel_name>}
     if 'name' not in response.json():
         return False
-    # check if channel name is as expected
-    # (channels can't change their name, must be re-registered)
     channel = Channel.query.filter_by(endpoint=endpoint).first()
     if not channel:
         print(f"Channel {endpoint} not found in database")
@@ -66,15 +77,27 @@ def health_check(endpoint, authkey):
     if response.json()['name'] != expected_name:
         return False
 
-    # everything is OK, set last_heartbeat to now
     channel.last_heartbeat = datetime.datetime.now()
     db.session.commit()  # save to database
     return True
 
 
-# Flask REST route for POST to /channels
 @app.route('/channels', methods=['POST'])
 def create_channel():
+    """
+    Endpoint for creating or updating a channel.
+    
+    Expects a JSON payload with keys:
+      - name: the name of the channel.
+      - endpoint: the URL where the channel is hosted.
+      - authkey: the channel's authentication key.
+      - type_of_service: a string describing the type of service.
+    
+    The function verifies the authorization header, validates the payload,
+    checks for an existing channel (and updates it if found), or creates a new channel.
+    It then performs a health check on the channel.
+    """
+
     global SERVER_AUTHKEY
 
     record = json.loads(request.data)
@@ -94,6 +117,8 @@ def create_channel():
     if 'type_of_service' not in record:
         return "Record has no type of service representation", 400
 
+    
+    # Check if a channel with the provided endpoint already exists.
     update_channel = Channel.query.filter_by(endpoint=record['endpoint']).first()
     print("update_channel: ", update_channel)
     if update_channel:  # Channel already exists, update it
@@ -106,7 +131,8 @@ def create_channel():
             return "Channel is not healthy", 400
         return jsonify(created=False,
                        id=update_channel.id), 200
-    else:  # new channel, create it
+    else:  
+        # create a new channel record
         channel = Channel(name=record['name'],
                           endpoint=record['endpoint'],
                           authkey=record['authkey'],
@@ -116,7 +142,7 @@ def create_channel():
         db.session.add(channel)
         db.session.commit()
         if not health_check(record['endpoint'], record['authkey']):
-            # delete channel from database
+            #If the channel fails the health check, remove it from the database.
             db.session.delete(channel)
             db.session.commit()
             return "Channel is not healthy", 400
@@ -126,6 +152,12 @@ def create_channel():
 
 @app.route('/channels', methods=['GET'])
 def get_channels():
+    """
+    Endpoint to retrieve a list of all registered channels.
+    
+    Returns a JSON response containing channel details such as name, endpoint,
+    authkey, and type of service.
+    """
     channels = Channel.query.all()
     return jsonify(channels=[{'name': c.name,
                               'endpoint': c.endpoint,

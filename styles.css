@@ -1,21 +1,33 @@
+/* -------------------------------------------------
+   Global Styles
+------------------------------------------------- */
 html, body {
   background: linear-gradient(135deg, #121212, #444444);
 }
 
+/* -------------------------------------------------
+   Root Element Styles
+------------------------------------------------- */
 #root {
   justify-content: center;
   font-family: 'Poppins', sans-serif;
   color: white;
-
 }
+
+/* -------------------------------------------------
+   Container Layout
+------------------------------------------------- */
 .container {
   display: flex;
   flex-direction: row;
   height: auto;
   margin: 0;
-  gap: 8px
+  gap: 8px;
 }
 
+/* -------------------------------------------------
+   Left Column Styles (Sidebar)
+------------------------------------------------- */
 .left-column {
   width: calc(25% - 4px);
   border: 2px solid #444444; 
@@ -24,6 +36,9 @@ html, body {
   padding: 16px;
 }
 
+/* -------------------------------------------------
+   Right Column Styles (Main Content)
+------------------------------------------------- */
 .right-column {
   width: calc(75% - 4px);
   border: 2px solid #444444;
@@ -31,17 +46,21 @@ html, body {
   padding: 16px;
 }
 
+/* -------------------------------------------------
+   Header Styles
+------------------------------------------------- */
 .Header {
   font-size: 3rem;
   font-weight: bold;
   width: 100%; 
   margin: 16px 0;
   padding: 16px 0;
-  /* border: solid 3px darkgrey;
-  border-radius: 16px; */
   text-align: center;
 }
 
+/* -------------------------------------------------
+   Welcome Message Styles
+------------------------------------------------- */
 .WelcomeMessage {
   font-size: 1.1rem;
   padding: 16px;
@@ -56,6 +75,9 @@ html, body {
   margin: 4px 0;
 }
 
+/* -------------------------------------------------
+   Message Box Styles
+------------------------------------------------- */
 .MessageBox {
   display: flex;
   flex-direction: column;
@@ -69,10 +91,12 @@ html, body {
   box-sizing: border-box;
   border: 2px solid #444444; 
 }
+
 .MessageBox h3 {
   margin: 0;
 }
 
+/* Input Field Styles */
 .MessageBox input {
   padding: 12px;
   background-color: #121212;
@@ -87,6 +111,7 @@ html, body {
   color: #888888;
 }
 
+/* New Message Button Styles */
 .new-message-button {
   padding: 12px 20px;
   background-color: #444444;
@@ -103,6 +128,7 @@ html, body {
   background-color: darkviolet; 
 }
 
+/* Message Header (sender & timestamp) */
 .message-header {
   display: flex;
   justify-content: space-between;
@@ -118,11 +144,13 @@ html, body {
   color: #888888;
 }
 
+/* Message Content Styles */
 .message-content {
   line-height: 1.4;
   word-wrap: break-word; 
 }
 
+/* Reaction Buttons Styles */
 .reaction-buttons {
   margin-top: 12px;
   display: flex;
@@ -146,6 +174,7 @@ html, body {
   background-color: darkviolet;
 }
 
+/* Comment Styles */
 .comment {
   background-color: #222222;
   padding: 8px;
@@ -155,14 +184,17 @@ html, body {
   color: #dddddd;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
-.comment-input-container{
+
+.comment-input-container {
   display: flex;
   align-items: center;
   gap: 8px;
 }
+
 .comment-input {
-  width: 90%
+  width: 90%;
 }
+
 .submit-button {
   width: 120px;
   height: 43px;
@@ -175,9 +207,12 @@ html, body {
   border-radius: 8px;
   transition: background-color 0.3s ease;
 }
+
 .submit-button:hover {
   background-color: darkviolet;
 }
+
+/* Modal Styles */
 .modal {
   position: fixed;
   background: white;
@@ -187,6 +222,7 @@ html, body {
   width: 300px;
   text-align: center;
 }
+
 .modal-overlay {
   position: fixed;
   width: 100%;
@@ -194,5 +230,4 @@ html, body {
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-
 }

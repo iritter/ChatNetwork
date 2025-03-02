@@ -1,8 +1,8 @@
-# Confession Wall 
+# Confession Wall Project
 
 Welcome to the **Confession Wall Project**! 🚀
 
-This project aims to create a **distributed chat network**. Our channel provides a unique and anonymous **confession wall**, where users can post confessions, react to others, and engage in discussions while ensuring a safe and moderated environment.
+This project aims to create a **distributed chat network**. Our channel provides a unique and anonymous **confession wall**, where users can post confessions, react to others, and comment to open a discussion while ensuring a safe and moderated environment.
 
 ---
 
@@ -22,35 +22,38 @@ This project aims to create a **distributed chat network**. Our channel provides
 ---
 
 ## 🔑 Key Features
-- ✅ **Anonymous Confessions** – Post messages without revealing your identity.
-- ✅ **React & Comment** – Engage with confessions by leaving comments and reactions.
-- ✅ **Auto-Expiring Messages** – Confessions disappear after **24 hours** to keep the wall fresh.
-- ✅ **Message Limitation** – Only the latest **15 confessions** are stored.
-- ✅ **Content Moderation** – A filter removes inappropriate words to maintain a respectful environment.
-- ✅ **Active Channel** – Auto-generated responses for specific message patterns.
-- ✅ **Channel List** – Browse other chat channels from the distributed hub.
+- ✅ **Anonymous Confessions** - Post messages using an alias to prevent revealing your identity.
+- ✅ **React & Comment** - Engage with confessions by leaving comments and three types of reactions.
+- ✅ **Auto-Expiring Messages** - Confessions disappear after **24 hours** to keep the wall fresh.
+- ✅ **Message Limitation** - Only the latest **15 confessions** are stored.
+- ✅ **Content Moderation** - A filter removes inappropriate words to maintain a respectful environment.
+- ✅ **Active Channel** - Auto-generated responses for specific message patterns.
+- ✅ **Channel List** - Browse other chat channels from the distributed hub using our channel list.
 
 ---
 
 ## ⚙️ How It Works
 
+## ⚙️ How It Works
+
 ### 1️⃣ Home Route
 When you visit our channel, you will see:
-- A **welcome message** introducing the purpose of the confession wall.
+- A **welcome message** introducing the purpose of the confession wall. When you select another channel, a standardized welcome message and layout will be used. 
+- A **personalized greeting**: Users must enter their name upon arrival, which will then be displayed in a personalized greeting message.
 - A **list of the most recent confessions** (newest at the top, oldest at the bottom).
 - A **channel list** on the left to explore other public chat channels.
 
 ### 2️⃣ Confession Submission & Interaction
 Users can submit confessions anonymously. Others can:
-- **Like/react** to a confession.
+- **Like/react** to a confession with three different options/buttons/emojis.
 - **Comment** on a confession (using the `extra` field to attach comments).
 
 ### 3️⃣ Message Filtering
 To ensure a respectful and meaningful discussion:
 - A **profanity filter** removes inappropriate words before posting.
 - Off-topic or spam messages are **not displayed**.
-- Automatic **keyword-based responses**:
-  - **Short messages** → "That was kurz und knapp..."
+- Automatic **keyword-based responses** e.g.:
+  - **Short messages** → "That was short but impactful"
   - **Long messages** → "Wow, thanks for the long submission!"
   - **Emotional messages** (e.g., "lonely") → "You are not alone… thanks for being part of the community."
 
@@ -84,10 +87,9 @@ To ensure a respectful and meaningful discussion:
  python channel.py
 ```
 ### 4️⃣ Deploy & Register:
-- Deploy the server to a university server.
 - Register it with the **public hub** at:
   - **Hub endpoint**: `http://vm146.rz.uni-osnabrueck.de/hub`
-  - **Auth key**: `'Crr-K24d-2N'`
+  - **Auth key**: `Pssst it's a secret`
 
 ---
 
@@ -104,9 +106,7 @@ ChatNetwork/
 |   channel.wsgi
 |   hub.wsgi
 |
-+---static
-|   \---css
-|           styles.css
+|   styles.css
 |
 +---templates
 |       channel.html

@@ -1,23 +1,36 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 
 <head>
+    <!-- Meta tags for character encoding and responsive design -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
+    <!-- Link to the external CSS file for styling -->
+    <link rel="stylesheet" href="styles.css">        
     <title>Simple React App</title>
-    <script type="text/javascript" charset="UTF-8"></script>
-</head>
+<script type="text/javascript" charset="UTF-8"></script></head>
 
 <body>
+    <!-- This is the root element where our React app will be mounted -->
     <div id="root"></div>
 
+    <!-- Load React, ReactDOM, and Babel (for compiling JSX on the fly) -->
     <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
 
+    <!-- Inline Babel script containing our React application code -->
     <script type="text/babel">
+         // --- Helper: Sanitize channel endpoints (remove trailing slashes) ---
+        function sanitizeChannel (channel) {
+            return { 
+                ...channel, 
+                endpoint: channel.endpoint.replace(/\/+$/,"")
+            };
+        }
 
+        // --- Header Component ---
+        // Displays a header. If the selected channel is "Confession Wall", it adds special emojis
         function Header({ selectedChannelName }) {
             if (selectedChannelName == "Confession Wall") {
                 return (
@@ -31,37 +44,38 @@
 
         }
 
+        // Modal dialog asking for the user's name; submits the name on "Enter" key press
         function NameDialog({ name, setName }) {
-            return <dialog open className="modal">
-                <article>
-                    <header>
+            return (
+                <dialog open className="modal">
+                    <article>
+                        <header>
+                        <p><strong>What's your name?</strong></p>
+                        </header>
                         <p>
-                            <strong>What's your name?</strong>
-                        </p>
-                    </header>
-                    <p>
                         <input type="text"
                             onKeyDown={({ key, target }) => key === 'Enter' && setName(target.value)} />
-                    </p>
-                </article>
-            </dialog>
+                        </p>
+                    </article>
+                </dialog>
+            );
         }
-
-        function Container() {
-            const [name, setName] = React.useState("");
-
-            if (name) {
-                return <div><h1 style={{ color: "purple" }}>Hello, {name}!</h1>
+        // If a name is provided, displays a greeting and a logout button.
+        // Otherwise, shows the NameDialog to prompt the user
+        function Container({name, setName}) {
+            return name ? (
+                <div>
+                    <h1 style={{ color: "purple" }}>Hello, {name}!</h1>
                     <button onClick={() => setName("")}>Logout</button>
-                </div>;
-            } else {
-                return (
-                    <div className="modal-overlay">
-                        <NameDialog name={name} setName={setName} />
-                    </div>
-                );
-            }
+                </div>
+            ) : (
+                <div className="modal-overlay">
+                <NameDialog name={name} setName={setName} />
+                </div>
+            );
         }
+
+        // Displays a welcome message with instructions. The message differs for "Confession Wall"
         function WelcomeMessage({ selectedChannel }) {
             return (
                 <div className="WelcomeMessage">
@@ -92,10 +106,82 @@
                 </div>
             );
         }
+        // Fetches messages from the channel endpoint using a GET request.
+        // Updates the messages state with the fetched data.
+        function fetchMessages(selectedChannel, setMessages) {
+            if (!selectedChannel || !setMessages) {
+                console.error("⚠️ Invalid channel: selectedChannel is undefined or missing endpoint.");
+                return;
+            }
+            
+            const sanitizedChannel = sanitizeChannel(selectedChannel);
+            console.log("Fetching messages from:", sanitizedChannel.endpoint);
+            console.log("Authorization header sent:", `authkey ${sanitizedChannel.authkey}`);
+
+            fetch(sanitizedChannel.endpoint, {
+                method: "GET",
+                headers: { Authorization: `authkey ${sanitizedChannel.authkey}` }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    console.log("Raw response:", response); // Check if the response is 200 OK
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+            
+                if (Array.isArray(data)) {
+                    setMessages(prevMessages => {
+                        return data.map(msg => {
+                            const oldMsg = prevMessages.find(m => m.timestamp === msg.timestamp);
+                            return oldMsg ? { ...msg, reactions: oldMsg.reactions || msg.reactions || { thumbs_up: [], heart: [], laugh: [] } } : msg;
+                        });
+                    });
+                } else {
+                    console.warn("⚠️ Unexpected response format:", data);
+                    setMessages([]);
+                }
+            })
+            .catch(error => {
+                 console.error("Error fetching messages:", error);
+            });
+        }
+        // Sends a new message to the channel via a POST request.
+        // After submission, it refreshes the messages list.
+        async function submitMessage(name, content, selectedChannel, setMessages) {
+            const timestamp = new Date().toISOString();
+            const newMessage = {
+                sender: name, 
+                content: content, 
+                timestamp: timestamp
+                };
 
 
-        function MessageInput({selectedChannel}) {
-            const [name, setName] = React.useState("");
+            console.log(JSON.stringify(newMessage));
+
+            const sanitizedChannel = sanitizeChannel(selectedChannel);
+            const response = await fetch(sanitizedChannel.endpoint, {
+                method: "POST",
+                headers: { 
+                'Authorization': `authkey ${sanitizedChannel.authkey}`,
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newMessage),
+            });
+
+            if (response.ok) {
+                const responseData = await response.json();
+                console.log("server response:", responseData);
+                fetchMessages(selectedChannel, setMessages);
+                setTimeout(() => fetchMessages(selectedChannel, setMessages), 1000);  // Wait 1 second, then refresh messages
+            } else {
+                console.error("Error posting message:", await response.text());
+            }
+        }
+        // Renders a form for the user to submit a new message.
+        // Displays different prompts based on whether the channel is "Confession Wall".
+        function MessageInput({ name, setName, selectedChannel, setMessages }) {
             const [content, setContent] = React.useState("");
 
             const onSubmit = async () => {
@@ -104,8 +190,9 @@
                     return;
                 }
 
-                submitMessage(name, content);
-            }
+                submitMessage(name, content, selectedChannel, setMessages);
+                fetchMessages(selectedChannel, setMessages);  // Ensure messages update after posting
+            };
 
             if (selectedChannel.name == "Confession Wall") {
                 return (
@@ -128,253 +215,309 @@
             }
         }
 
-        
-        async function submitMessage(name, content) {
-            const timestamp = new Date().toISOString();
-            const newMessage = {
-                sender: name,
-                content: content,
-                timestamp: timestamp
+      // Sends a reaction (e.g., thumbs up, heart, laugh) for a specific message.
+      // The reaction is sent to the channel endpoint appended with "/react".
+      async function sendReaction(selectedChannel, messageTimestamp, reactionType, user) {
+            const sanitizedChannel = sanitizeChannel(selectedChannel);
+            // Append /react to the base endpoint
+            const reactionEndpoint = sanitizedChannel.endpoint + "/react";
+            const payload = {
+                message_id: messageTimestamp,
+                user: user,
+                reaction: reactionType
             };
-
-            console.log(JSON.stringify(newMessage));
-
-            const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
+            const response = await fetch(reactionEndpoint, {
                 method: "POST",
                 headers: {
-                    'Authorization': 'authkey Sdh-aKo34-hf',
-                    'Content-Type': 'application/json'
+                'Authorization': `authkey ${sanitizedChannel.authkey}`,
+                'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(newMessage),
+                body: JSON.stringify(payload)
             });
-
             if (response.ok) {
-                //const responseData = await response.json();
-                console.log("Success juhu");
-
+                const updatedReactions = await response.json();
+                console.log("Updated reactions:", updatedReactions);
+                return updatedReactions;
             } else {
-                const errorText = await response.text();
-                console.error("Error:", response.status, errorText);
+                console.error("Error posting reaction:", await response.text());
             }
         }
-
-        /*async function submitMessage(name, content, { selectedChannel }) {
-            const timestamp = new Date().toISOString();
-            
-            const newMessage = {
-                sender: name,
-                content: content,
-                timestamp: timestamp
+        // Renders a single message, its reactions, and its comment section.
+        // It allows the user to react and add comments.
+        function MessageBox({ sender, content, timestamp, reactions, extra, selectedChannel, setMessages, currentUser }) {
+            // Default reaction counts based on the passed reactions prop.
+            const defaultReactionCounts = {
+                thumbs_up: reactions && reactions.thumbs_up
+                ? (Array.isArray(reactions.thumbs_up) ? reactions.thumbs_up.length : reactions.thumbs_up)
+                : 0,
+                heart: reactions && reactions.heart
+                ? (Array.isArray(reactions.heart) ? reactions.heart.length : reactions.heart)
+                : 0,
+                laugh: reactions && reactions.laugh
+                ? (Array.isArray(reactions.laugh) ? reactions.laugh.length : reactions.laugh)
+                : 0
             };
 
-            console.log(JSON.stringify(newMessage));
-
-            const response = await fetch(selectedChannel.endpoint, {
-                method: "POST",
-                headers: {
-                    Authorization: `authkey ${selectedChannel.authkey}`,
-                },
-                body: JSON.stringify(newMessage),
+            // Local state for reaction counts, tracking whether the user has already reacted, and comment input.
+            const [reactionCounts, setReactionCounts] = React.useState(defaultReactionCounts);
+            const [hasReacted, setHasReacted] = React.useState({
+                thumbs_up: false,
+                heart: false,
+                laugh: false
             });
+            const [comment, setComment] = React.useState(""); // For new comment input
 
-            if (response.ok) {
-                //const responseData = await response.json();
-                console.log("Success juhu");
-            } else {
-                const errorText = await response.text();
-                console.error("Error:", response.status, errorText);
-            }
-        }*/
-
-        function MessageList({ selectedChannel }) {
-            const [messages, setMessages] = React.useState([]);
-
-            React.useEffect(() => {
-                if (!selectedChannel) return;
-
-                const fetchMessages = () => {
-                    fetch(selectedChannel.endpoint, {
-                        method: "GET",
-                        headers: {
-                            Authorization: `authkey ${selectedChannel.authkey}`,
-                        },
-                    })
-                        .then((response) => {
-                            if (!response.ok) {
-                                throw new Error(`HTTP error! Status: ${response.status}`);
-                            }
-                            return response.json();
-                        })
-                        .then((data) => {
-                            setMessages(Array.isArray(data) ? data : []);
-                        })
-                        .catch((error) => console.error("Error fetching messages:", error));
-                };
-
-                // Fetch immediately on mount
-                fetchMessages();
-
-                // Set interval to fetch messages every 3 seconds
-                const interval = setInterval(fetchMessages, 3000);
-
-                // Cleanup function to clear interval when component unmounts or selectedChannel changes
-                return () => clearInterval(interval);
-            }, [selectedChannel]);
-
-            return (
-                <div>
-                    {messages.length > 0 ? (
-                        messages.map((message, index) => (
-                            <MessageBox
-                                key={message.id || index}
-                                sender={message.sender}
-                                content={message.content}
-                                timestamp={message.timestamp}
-                                extra={message.extra}
-                                selectedChannel={selectedChannel}
-                            /> 
-                        ))
-                    ) : (
-                        <p>No messages found.</p>
-                    )}
-                </div>
-            );
-        } 
-
-
-        function MessageBox({ sender, content, timestamp, extra, selectedChannel}) {
-            const [comment, setComment] = React.useState("");
-
+            // Format the timestamp to a localised string. 
             const dateFormat = new Date(timestamp).toLocaleString('de-DE', {
                 year: '2-digit',
                 month: '2-digit',
                 day: '2-digit',
                 hour: '2-digit',
-                minute: '2-digit',
+                minute: '2-digit'
             });
 
-            const checkExtra = Array.isArray(extra) ? extra : [0, "", []]; // standard empty
+            // Process extra data for comments. Ensure it's an array with default values.
+            const checkExtra = Array.isArray(extra) ? extra : [0, "", []];
             const comments = Array.isArray(checkExtra[2]) ? checkExtra[2] : [];
 
-            async function saveReaction() {
-                const newMessage = {
-                    sender: "increment-reaction",
-                    content: "unknown",
-                    timestamp: timestamp
-                };
-
-                console.log(JSON.stringify(newMessage));
-
-                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
-                    method: "POST",
-                    headers: {
-                        'Authorization': 'authkey Sdh-aKo34-hf',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newMessage),
+            // Update reaction counts whenever the "reactions" prop changes.
+            React.useEffect(() => {
+                setReactionCounts({
+                thumbs_up: reactions && reactions.thumbs_up
+                    ? (Array.isArray(reactions.thumbs_up) ? reactions.thumbs_up.length : reactions.thumbs_up)
+                    : 0,
+                heart: reactions && reactions.heart
+                    ? (Array.isArray(reactions.heart) ? reactions.heart.length : reactions.heart)
+                    : 0,
+                laugh: reactions && reactions.laugh
+                    ? (Array.isArray(reactions.laugh) ? reactions.laugh.length : reactions.laugh)
+                    : 0
                 });
+                setHasReacted({ thumbs_up: false, heart: false, laugh: false });
+            }, [reactions]);
 
-                if (response.ok) {
-                    console.log("success reaction saved");
-
-                } else {
-                    const errorText = await response.text();
-                    console.error("Error:", response.status, errorText);
+            // Handle reactions by sending the reaction to the server and updating local state.
+            async function handleReaction(reactionType) {
+                if (hasReacted[reactionType]) return;
+                const updatedReactions = await sendReaction(selectedChannel, timestamp, reactionType, currentUser);
+                if (updatedReactions) {
+                setReactionCounts({
+                    ...reactionCounts,
+                    [reactionType]: Array.isArray(updatedReactions[reactionType])
+                    ? updatedReactions[reactionType].length
+                    : updatedReactions[reactionType]
+                });
+                setHasReacted({ ...hasReacted, [reactionType]: true });
+                fetchMessages(selectedChannel, setMessages);
                 }
             }
 
-            async function add_comment() {
+            // Add a comment by sending it to the server.
+            async function addComment() {
                 const newMessage = {
-                    sender: "add-comment",
-                    content: comment,
-                    timestamp: timestamp
+                sender: "add-comment",
+                content: comment,
+                timestamp: timestamp
                 };
-
+                // Override the selectedChannel for Confession Wall if needed.
+                let channelForPosting = selectedChannel;
+                if (selectedChannel.name.trim().toLowerCase() === "confession wall") {
+                    channelForPosting = {
+                    ...selectedChannel,
+                    endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",
+                    authkey: "Sdh-aKo34-hf"
+                    };
+                }
+                const sanitizedChannel = sanitizeChannel(channelForPosting);
                 console.log(JSON.stringify(newMessage));
 
-                const response = await fetch("http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi", {
-                    method: "POST",
-                    headers: {
-                        'Authorization': 'authkey Sdh-aKo34-hf',
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(newMessage),
+                const response = await fetch(sanitizedChannel.endpoint, {
+                method: "POST",
+                headers: {
+                    'Authorization': `authkey ${sanitizedChannel.authkey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(newMessage)
                 });
 
                 if (response.ok) {
-                    console.log("success reaction saved");
-
+                console.log("Comment saved successfully");
+                setComment("");
+                fetchMessages(channelForPosting, setMessages);
                 } else {
-                    const errorText = await response.text();
-                    console.error("Error:", response.status, errorText);
+                const errorText = await response.text();
+                console.error("Error saving comment:", response.status, errorText);
                 }
             }
 
-
-            if (selectedChannel.name == "Confession Wall") {
+            // Render the MessageBox differently depending on the channel.
+            if (selectedChannel.name === "Confession Wall") {
                 return (
-                    <div className="MessageBox">
-                        <div className="message-header">
-                            <span className="sender">{sender}</span>
-                            <span className="timestamp">{dateFormat}</span>
-                        </div>
-                        <div className="message-content">{content}</div>
-                        <div className="reaction-buttons">
-                            <button onClick={() => saveReaction()}>👍 ❤️ 😂 {extra[0]}</button>
-                        </div>
-
-                        <div className="comments-section">
-                            <div className="comment">{extra[1]}</div>
-
-                            {comments.map((comment, index) => (
-                                <div key={index} className="comment">
-                                    {comment}
-                                </div>
-                            ))}
-                            <div className="comment-input-container">
-                                <input className="comment-input" type="text" placeholder="Write a comment" value={comment} onChange={(e) => setComment(e.target.value)} />
-                                <button
-                                    className="submit-button"
-                                    onClick={() => add_comment()}
-                                >
-                                    Submit
-                                </button>
-                            </div>
-                        </div>
+                <div className="MessageBox">
+                    <div className="message-header">
+                    <span className="sender">{sender}</span>
+                    <span className="timestamp">{dateFormat}</span>
                     </div>
+                    <div className="message-content">{content}</div>
+                    <div className="reaction-buttons">
+                    <button disabled={hasReacted.thumbs_up} onClick={() => handleReaction("thumbs_up")}>
+                        👍 {reactionCounts.thumbs_up}
+                    </button>
+                    <button disabled={hasReacted.heart} onClick={() => handleReaction("heart")}>
+                        ❤️ {reactionCounts.heart}
+                    </button>
+                    <button disabled={hasReacted.laugh} onClick={() => handleReaction("laugh")}>
+                        😂 {reactionCounts.laugh}
+                    </button>
+                    </div>
+                    <div className="comments-section">
+                    {/* Main comment (if any) */}
+                    <div className="comment">{checkExtra[1]}</div>
+                    {/* List of additional comments */}
+                    {comments.map((comm, index) => (
+                        <div key={index} className="comment">
+                        {comm}
+                        </div>
+                    ))}
+                    <div className="comment-input-container">
+                        <input
+                        className="comment-input"
+                        type="text"
+                        placeholder="Write a comment"
+                        value={comment}
+                        onChange={e => setComment(e.target.value)}
+                        />
+                        <button className="submit-button" onClick={addComment}>Submit</button>
+                    </div>
+                    </div>
+                </div>
                 );
             } else {
+                // Render a simpler MessageBox for non-Confession Wall channels.
                 return (
-                    <div className="MessageBox">
-                        <div className="message-header">
-                            <span className="sender">{sender}</span>
-                            <span className="timestamp">{dateFormat}</span>
-                        </div>
-                        <div className="message-content">{content}</div>
-
-
+                <div className="MessageBox">
+                    <div className="message-header">
+                    <span className="sender">{sender}</span>
+                    <span className="timestamp">{dateFormat}</span>
                     </div>
+                    <div className="message-content">{content}</div>
+                </div>
                 );
             }
         }
 
+        // Renders a list of MessageBox components.
+        // It also sets up a polling interval to refresh messages every 5 seconds.
+         function MessageList({ selectedChannel, setSelectedChannel, messages, lastChannel, fetchMessages, setMessages, currentUser }) {
+            const [error, setError] = React.useState(null);
+
+            React.useEffect(() => {
+               if (!selectedChannel || !selectedChannel.endpoint) {
+                    setError("⚠️ Invalid channel selected.");
+                    return;
+                }
+                // If the selected channel is "Confession Wall", override its endpoint and authkey
+                let channelToUse = selectedChannel;
+                if (selectedChannel.name === "Confession Wall") {
+                    channelToUse = {
+                    ...selectedChannel,
+                    endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",
+                    authkey: "Sdh-aKo34-hf"
+                    };
+                }
+                fetchMessages(channelToUse, setMessages);
+                const interval = setInterval(() => fetchMessages(channelToUse, setMessages), 5000);
+                return () => clearInterval(interval);
+                }, [selectedChannel, fetchMessages, setMessages]);
+            return (
+                <div>
+                    {error ? (
+                        <div className="error-message">
+                            <p>{error}</p>
+                            <button onClick={() => setSelectedChannel(lastChannel)}>🔙 Back to Last Channel</button>
+                            <button onClick={() => setSelectedChannel({
+                                name: "Confession Wall",
+                                endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",
+                                authkey: "Sdh-aKo34-hf"
+                            })}>
+                                🔄 Go to Confession Wall
+                            </button>
+                        </div>
+                    ) : (
+                        messages.length > 0 ? (
+                            messages.map((message, index) => (
+                                <MessageBox
+                                    key={message.id || index}
+                                    sender={message.sender}             
+                                    content={message.content}           
+                                    timestamp={message.timestamp}       
+                                    reactions={message.reactions} 
+                                    extra={message.extra || [0, "", []]}     
+                                    selectedChannel={selectedChannel}
+                                    setMessages={setMessages}
+                                    currentUser={currentUser} 
+                                />
+                            ))
+                        ) : (
+                            <p>No messages found.</p>
+                        )
+                    )}
+                </div>
+            );
+        }
+
+        // Fetches available channels from the hub, removes duplicates, and ensures that
+        // the "Confession Wall" channel is always included with the correct endpoint.
         function ChannelList({ selectedChannel, setSelectedChannel }) {
             const [channels, setChannels] = React.useState([]);
 
             React.useEffect(() => {
                 fetch("http://vm146.rz.uos.de/hub/channels")
                     .then(response => response.json())
-                    .then(data => setChannels(data.channels));
+                    .then(data => {
+                        if (!data.channels) return;
+                        // Remove duplicate channels and only include those with an endpoint.
+                        const unique = [];
+                        const names = new Set();
+                         // Filter out any channel named "Confession Wall" from the hub
+                         data.channels.forEach(channel => {
+                            if (
+                                channel.endpoint &&
+                                channel.name.trim().toLowerCase() !== "confession wall" &&
+                                !names.has(channel.name)
+                            ) {
+                                names.add(channel.name);
+                                unique.push(channel);
+                            }
+                        });
+                        // Always include the Confession Wall channel.
+                        if (!names.has("Confession Wall")) {
+                            unique.unshift({
+                                name: "Confession Wall",
+                                endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",  // the confession wall endpoint
+                                authkey: "Sdh-aKo34-hf"
+                            });
+                        }
+                        setChannels(unique);
+                    })
+                    .catch(error => console.error("Error fetching channels:", error));
             }, []);
 
             return (
                 <div>
+                    <h3>Your Channels</h3>
                     <ul style={{ listStyleType: "disc", paddingLeft: "20px", color: "white" }}>
                         {channels.map((channel, index) => (
                             <li key={`${channel.id || channel.endpoint}-${index}`} style={{ lineHeight: "2.0", marginBottom: "15px" }}>
                                 <button
                                     onClick={() => setSelectedChannel(channel)}
-                                    style={{ background: "none", border: "none", color: "white", textDecoration: "none", cursor: "pointer" }}
+                                    style={{
+                                        background: "none",
+                                        border: "none",
+                                        color: "white",
+                                        textDecoration: "none",
+                                        cursor: "pointer"
+                                    }}
                                 >
                                     {channel.name}
                                 </button>
@@ -384,20 +527,66 @@
                 </div>
             );
         }
+
+        // Main component of the application. Maintains global state for:
+        // - The currently selected channel
+        // - The list of messages
+        // - The current user's name
+        // Composes all other components to create the overall layout.
         function App() {
             const [selectedChannel, setSelectedChannel] = React.useState({
                 name: "Confession Wall",
-                endpoint: "http://vm146.rz.uni-osnabrueck.de/u089/channel.wsgi",
+                endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",
                 authkey: "Sdh-aKo34-hf"
             });
+            const [lastChannel, setLastChannel] = React.useState(selectedChannel);
+            const [messages, setMessages] = React.useState([]);  // Define messages state at the top
+            const [name, setName] = React.useState(""); // Lifted name state
+        
+            // Whenever the selected channel changes, fetch messages for that channel.
+            React.useEffect(() => {
+                if (selectedChannel) {
+                    console.log("🆕 Channel changed, fetching messages...");
+                    fetchMessages(selectedChannel, setMessages);  // Fetch messages when channel changes
+                }
+            }, [selectedChannel]);
 
             return (
                 <div>
+                    {/* Dedicated button to switch back to the correct "Confession Wall" channel */}
+                    <button
+                        onClick={() => setSelectedChannel({
+                            name: "Confession Wall",
+                            endpoint: "http://vm146.rz.uni-osnabrueck.de/u024/channel.wsgi",
+                            authkey: "Sdh-aKo34-hf"
+                        })}
+                        style={{ position: "absolute",
+                                top: "10px",
+                                right: "10px",
+                                padding: "8px",
+                                background: "#6200ea",
+                                color: "white",
+                                border: "none",
+                                cursor: "pointer",
+                                borderRadius: "5px",
+                                fontSize: "14px" }}
+                    >
+                        🔄 Back to Confession Wall
+                    </button>
+
+
+                    {/* Render the Header with the selected channel name */}
                     <Header selectedChannelName={selectedChannel.name} />
+                  
+                  
+                    {/* Main container divides into two columns:
+                      - Left column: User login (Container) and ChannelList
+                      - Right column: WelcomeMessage, MessageInput, and MessageList */}
                     <div className="container">
                         <div className="left-column">
                             <section>
-                                <Container />
+                                {/* Pass name and setName to Container */}
+                                <Container name={name} setName={setName} />
                             </section>
                             <h2>Your Channels</h2>
                             <ChannelList selectedChannel={selectedChannel} setSelectedChannel={setSelectedChannel} />
@@ -405,17 +594,24 @@
 
                         <div className="right-column">
                             <WelcomeMessage selectedChannel={selectedChannel}/>
-                            <MessageInput selectedChannel={selectedChannel}/>
-                            <MessageList selectedChannel={selectedChannel} />
-                        </div>
+                            <MessageInput name={name} setName={setName} selectedChannel={selectedChannel} setMessages={setMessages} />
+                            <MessageList 
+                                selectedChannel={selectedChannel} 
+                                setSelectedChannel={setSelectedChannel} 
+                                messages={messages} 
+                                lastChannel={lastChannel} 
+                                fetchMessages={fetchMessages} 
+                                setMessages={setMessages} 
+                                currentUser={name} 
+                            />
+                            </div>
                     </div>
                     <footer>AI and the Web 2025</footer>
                 </div>
-            )
-
-        }
-
-
+            );
+        } 
+        
+        // Render the main App component into the DOM element with id "root".
         ReactDOM.render(
             <App />,
             document.getElementById('root')
@@ -423,5 +619,4 @@
 
     </script>
 </body>
-
 </html>
