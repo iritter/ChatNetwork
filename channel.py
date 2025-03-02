@@ -34,7 +34,7 @@ CHANNEL_TYPE_OF_SERVICE = 'aiweb24:chat'
 CHANNEL_FILE = 'messages.json'
 
 # Set the maximum number of messages to store
-MAX_MESSAGES = 15  # change this value to set your desired limit
+MAX_MESSAGES = 100  # change this value to set your desired limit
 
 @app.cli.command('register')
 def register_command():
