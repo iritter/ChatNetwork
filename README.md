@@ -25,7 +25,7 @@ This project aims to create a **distributed chat network**. Our channel provides
 - ✅ **Anonymous Confessions** - Post messages using an alias to prevent revealing your identity.
 - ✅ **React & Comment** - Engage with confessions by leaving comments and three types of reactions.
 - ✅ **Auto-Expiring Messages** - Confessions disappear after **24 hours** to keep the wall fresh.
-- ✅ **Message Limitation** - Only the latest **15 confessions** are stored.
+- ✅ **Message Limitation** - Only the latest **100 confessions** are stored.
 - ✅ **Content Moderation** - A filter removes inappropriate words to maintain a respectful environment.
 - ✅ **Active Channel** - Auto-generated responses for specific message patterns.
 - ✅ **Channel List** - Browse other chat channels from the distributed hub using our channel list.
